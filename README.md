@@ -47,6 +47,31 @@ jeu de données `supabase/seed.sql`.
 | `pnpm test:e2e` | Parcours principaux dans un navigateur (Playwright) ; la première fois : `pnpm exec playwright install chromium` |
 | `pnpm lint` et `pnpm typecheck` | Qualité du code |
 
+### Tests de la base sans Docker
+
+Si Supabase ne peut pas tourner en local, les tests de la base fonctionnent aussi sur un
+PostgreSQL 16 classique. Le script crée une base jetable avec une imitation minimale des
+schémas `auth` et `storage` de Supabase, puis applique les migrations et le seed :
+
+```bash
+ADMIN_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres pnpm db:test-bootstrap
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/certipilot_test pnpm test:db
+```
+
+C'est ce que fait l'intégration continue.
+
+## Données
+
+- `supabase/migrations/` : le schéma, la RLS, les triggers de conformité et d'audit, le
+  stockage et le référentiel par défaut (les 8 recommandations, leurs catégories et deux
+  grilles d'exemple). Ce référentiel est copié dans chaque organisme à son inscription,
+  qui peut ensuite l'adapter. Les grilles d'exemple ne sont **pas officielles** et sont
+  marquées « À VALIDER avec un testeur ».
+- `supabase/seed.sql` : un organisme de démonstration, pour le développement local
+  uniquement. Comptes (mot de passe `certipilot-demo`) :
+  `admin@demo.certipilot.test`, `secretariat@demo.certipilot.test`,
+  `testeur1@demo.certipilot.test`, `testeur2@demo.certipilot.test`.
+
 ## Déploiement
 
 Le déploiement complet (Vercel et Supabase en Europe) est décrit à la fin du projet.
