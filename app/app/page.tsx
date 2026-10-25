@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
 import { ComplianceAlerts } from "@/components/dashboard/compliance-alerts";
+import { CertificateStats, Renewals, UpcomingSessions } from "@/components/dashboard/dashboard-panels";
 import { PageHeader } from "@/components/layout/app-shell";
 import { requireSession } from "@/lib/auth";
 import { getComplianceAlerts } from "@/lib/queries/alerts";
+import { getDashboardData } from "@/lib/queries/dashboard";
 import { toIsoDate } from "@/lib/rules";
 
 export const metadata: Metadata = { title: "Tableau de bord" };
 
 export default async function DashboardPage() {
   const session = await requireSession(["admin", "secretariat"]);
-  const alerts = await getComplianceAlerts(toIsoDate(new Date()));
+  const today = toIsoDate(new Date());
+  const [alerts, data] = await Promise.all([getComplianceAlerts(today), getDashboardData(today)]);
   return (
     <>
       <PageHeader title="Tableau de bord" description={`Bienvenue, ${session.profile.full_name}.`} />
       <div className="grid gap-6">
-        <ComplianceAlerts alerts={alerts} />
+        <CertificateStats data={data} />
+        <div className="grid gap-6 xl:grid-cols-2">
+          <UpcomingSessions sessions={data.upcomingSessions} today={today} />
+          <ComplianceAlerts alerts={alerts} />
+        </div>
+        <Renewals groups={data.renewals} today={today} />
       </div>
     </>
   );

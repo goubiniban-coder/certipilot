@@ -71,7 +71,9 @@ C'est ce que fait l'intégration continue.
   uniquement. Comptes (mot de passe `certipilot-demo`) :
   `admin@demo.certipilot.test`, `secretariat@demo.certipilot.test`,
   `testeur1@demo.certipilot.test`, `testeur2@demo.certipilot.test`. La « Session du jour
-  (démo) » attribue deux épreuves pratiques du jour à `testeur1` (Marc Testeur).
+  (démo) » attribue deux épreuves pratiques du jour à `testeur1` (Marc Testeur), et un
+  historique de trois certificats délivrés il y a environ cinq ans alimente les
+  renouvellements du tableau de bord.
 
 ## Application testeur hors connexion
 

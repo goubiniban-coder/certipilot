@@ -21,6 +21,12 @@ declare
   v_client2 uuid := '00000000-0000-4000-8000-000000000302';
   v_session uuid := '00000000-0000-4000-8000-000000000401';
   v_session_today uuid := '00000000-0000-4000-8000-000000000402';
+  v_session_past uuid := '00000000-0000-4000-8000-000000000403';
+  v_history record;
+  v_sc uuid;
+  v_candidate uuid;
+  v_test uuid;
+  v_certificate uuid;
   v_r489_3 uuid;
   v_r486_b uuid;
   v_user record;
@@ -115,5 +121,45 @@ begin
   join public.grids g on g.organization_id = v_org and g.category_id = v_r489_3 and g.is_active
   join public.equipment e on e.organization_id = v_org and e.serial_number = 'CF-0001'
   where sc.session_id = v_session_today;
+
+  -- History taken over from a previous tool: certificates issued about five years
+  -- ago, so that the dashboard shows renewals. Inserted as they were issued then,
+  -- with the compliance and audit triggers off (local demo data only).
+  set local session_replication_role = replica;
+  insert into public.sessions (id, organization_id, name, starts_on, ends_on, location, status)
+  values (v_session_past, v_org, 'Session chariots (historique)', (current_date - interval '5 years')::date + 40,
+          (current_date - interval '5 years')::date + 40, 'Plateforme logistique, Lille', 'closed');
+  for v_history in
+    select * from (values ('Martin', 40, 1), ('Petit', 120, 2), ('Bernard', 300, 3)) as h(last_name, days, seq)
+  loop
+    insert into public.session_candidates (organization_id, session_id, candidate_id, identity_document_type,
+      identity_document_number, identity_verified, identity_verified_at)
+    select v_org, v_session_past, c.id, 'cni', 'HIST' || v_history.seq, true, (current_date - interval '5 years') + interval '40 days'
+    from public.candidates c where c.organization_id = v_org and c.last_name = v_history.last_name
+    returning id, candidate_id into v_sc, v_candidate;
+
+    insert into public.practical_tests (organization_id, session_candidate_id, category_id, grid_id, tester_id,
+      equipment_id, test_date, status, score, started_at, ended_at, duration_seconds, tester_signature_path, signed_at)
+    select v_org, v_sc, v_r489_3, g.id, v_tester2, e.id, (current_date - interval '5 years')::date + 40, 'passed', 85,
+      now() - interval '5 years', now() - interval '5 years', 2400, v_org || '/historique/signature.png', now() - interval '5 years'
+    from public.grids g, public.equipment e
+    where g.organization_id = v_org and g.category_id = v_r489_3 and g.is_active
+      and e.organization_id = v_org and e.serial_number = 'CF-0001'
+    returning id into v_test;
+
+    insert into public.certificates (organization_id, number, candidate_id, recommendation_id, session_id,
+      holder_last_name, holder_first_name, holder_birth_date, recommendation_code, recommendation_label,
+      issued_on, expires_on)
+    select v_org, 'DEMO-' || extract(year from current_date - interval '5 years') || '-90000' || v_history.seq,
+      c.id, r.id, v_session_past, c.last_name, c.first_name, c.birth_date, r.code, r.label,
+      (current_date + v_history.days - interval '5 years')::date, current_date + v_history.days
+    from public.candidates c, public.recommendations r
+    where c.id = v_candidate and r.organization_id = v_org and r.code = 'R.489'
+    returning id into v_certificate;
+
+    insert into public.certificate_categories (organization_id, certificate_id, category_id, category_code, category_label, practical_test_id)
+    select v_org, v_certificate, cat.id, cat.code, cat.label, v_test from public.categories cat where cat.id = v_r489_3;
+  end loop;
+  set local session_replication_role = origin;
 end;
 $$;
