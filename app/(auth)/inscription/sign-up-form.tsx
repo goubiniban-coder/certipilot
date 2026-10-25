@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { Field } from "@/components/forms/field";
 import { FormMessage } from "@/components/forms/form-message";
@@ -12,7 +13,7 @@ export function SignUpForm() {
   if (state.ok) return <FormMessage state={state} />;
 
   return (
-    <form action={action} className="grid gap-5" noValidate>
+    <ActionForm action={action} className="grid gap-5" noValidate>
       <FormMessage state={state} />
       <fieldset className="grid gap-5">
         <legend className="mb-2 text-lg font-bold">Votre organisme</legend>
@@ -51,6 +52,6 @@ export function SignUpForm() {
       <SubmitButton size="lg" pendingLabel="Inscription…">
         Créer l&apos;espace de mon organisme
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { Field } from "@/components/forms/field";
 import { FormMessage } from "@/components/forms/form-message";
@@ -9,7 +10,7 @@ import { signIn } from "../actions";
 export function SignInForm() {
   const [state, action] = useActionState(signIn, {});
   return (
-    <form action={action} className="grid gap-5" noValidate>
+    <ActionForm action={action} className="grid gap-5" noValidate>
       <FormMessage state={state} />
       <Field
         label="Adresse e-mail"
@@ -30,6 +31,6 @@ export function SignInForm() {
       <SubmitButton size="lg" pendingLabel="Connexion…">
         Se connecter
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

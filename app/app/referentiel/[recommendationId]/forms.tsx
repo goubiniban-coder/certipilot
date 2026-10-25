@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { Field } from "@/components/forms/field";
 import { FormMessage } from "@/components/forms/form-message";
@@ -19,7 +20,7 @@ export function RecommendationForm({
   const [state, action] = useActionState(updateRecommendation, {});
   const errors = state.fieldErrors ?? {};
   return (
-    <form action={action} className="grid gap-5 md:grid-cols-2" noValidate>
+    <ActionForm action={action} className="grid gap-5 md:grid-cols-2" noValidate>
       <div className="md:col-span-2">
         <FormMessage state={state} />
       </div>
@@ -55,7 +56,7 @@ export function RecommendationForm({
           <SubmitButton>Enregistrer</SubmitButton>
         </div>
       )}
-    </form>
+    </ActionForm>
   );
 }
 
@@ -72,7 +73,7 @@ export function CategoryForm({
   const errors = state.fieldErrors ?? {};
   const prefix = category?.id ?? "new";
   return (
-    <form action={action} className="grid gap-4 md:grid-cols-[6rem_1fr_10rem_10rem]" noValidate>
+    <ActionForm action={action} className="grid gap-4 md:grid-cols-[6rem_1fr_10rem_10rem]" noValidate>
       {state.message ? (
         <div className="md:col-span-4">
           <FormMessage state={state} />
@@ -116,6 +117,6 @@ export function CategoryForm({
           </SubmitButton>
         </div>
       )}
-    </form>
+    </ActionForm>
   );
 }

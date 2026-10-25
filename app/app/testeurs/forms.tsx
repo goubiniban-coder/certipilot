@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { CategorySelect } from "@/components/forms/category-select";
 import { Field } from "@/components/forms/field";
@@ -15,7 +16,7 @@ export function TesterForm({ tester }: { tester?: Tester }) {
   const [state, action] = useActionState(saveTester, {});
   const errors = state.fieldErrors ?? {};
   return (
-    <form action={action} className="grid gap-4" noValidate>
+    <ActionForm action={action} className="grid gap-4" noValidate>
       <FormMessage state={state} />
       {tester ? <input type="hidden" name="id" value={tester.id} /> : null}
       <Field label="Nom et prénom" name="fullName" defaultValue={tester?.full_name} errors={errors.fullName} />
@@ -37,7 +38,7 @@ export function TesterForm({ tester }: { tester?: Tester }) {
         </div>
       ) : null}
       <SubmitButton>{tester ? "Enregistrer" : "Créer la fiche"}</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
@@ -45,7 +46,7 @@ export function QualificationForm({ testerId, options, today }: { testerId: stri
   const [state, action] = useActionState(addQualification, {});
   const errors = state.fieldErrors ?? {};
   return (
-    <form action={action} className="grid gap-4 md:grid-cols-[1fr_12rem_auto] md:items-end" noValidate>
+    <ActionForm action={action} className="grid gap-4 md:grid-cols-[1fr_12rem_auto] md:items-end" noValidate>
       <div className="md:col-span-3">
         <FormMessage state={state} />
       </div>
@@ -53,7 +54,7 @@ export function QualificationForm({ testerId, options, today }: { testerId: stri
       <CategorySelect id="qualification-category" options={options} errors={errors.categoryId} />
       <Field id="qualification-date" label="Habilité le" name="grantedOn" type="date" defaultValue={today} errors={errors.grantedOn} />
       <SubmitButton>Habiliter</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
@@ -61,7 +62,7 @@ export function PersonalCacesForm({ testerId, options }: { testerId: string; opt
   const [state, action] = useActionState(addPersonalCaces, {});
   const errors = state.fieldErrors ?? {};
   return (
-    <form action={action} className="grid gap-4 md:grid-cols-2" noValidate>
+    <ActionForm action={action} className="grid gap-4 md:grid-cols-2" noValidate>
       <div className="md:col-span-2">
         <FormMessage state={state} />
       </div>
@@ -74,6 +75,6 @@ export function PersonalCacesForm({ testerId, options }: { testerId: string; opt
       <div className="md:col-span-2">
         <SubmitButton>Ajouter le CACES®</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

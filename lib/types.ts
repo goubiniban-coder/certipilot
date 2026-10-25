@@ -112,3 +112,44 @@ export interface Equipment {
   last_inspection_on: string | null;
   active: boolean;
 }
+
+export interface ClientCompany {
+  id: string;
+  name: string;
+  siret: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+}
+
+export interface Candidate {
+  id: string;
+  last_name: string;
+  first_name: string;
+  birth_date: string;
+  email: string | null;
+  photo_path: string | null;
+  client_company_id: string | null;
+  trainer_tester_id: string | null;
+  trainer_name: string | null;
+  anonymized_at: string | null;
+}
+
+export type SessionStatus = "draft" | "planned" | "in_progress" | "closed";
+
+export const SESSION_STATUS_LABELS: Record<SessionStatus, string> = {
+  draft: "Brouillon",
+  planned: "Planifiée",
+  in_progress: "En cours",
+  closed: "Clôturée",
+};
+
+export interface TestSession {
+  id: string;
+  name: string;
+  starts_on: string;
+  ends_on: string;
+  location: string;
+  status: SessionStatus;
+  notes: string | null;
+}

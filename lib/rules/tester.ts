@@ -50,6 +50,11 @@ function normalizeName(name: string): string {
     .join(" ");
 }
 
+/** Same person name, ignoring case, accents, punctuation and word order. */
+export function sameName(a: string, b: string): boolean {
+  return normalizeName(a) === normalizeName(b);
+}
+
 export function normalizeSiret(siret: string): string {
   return siret.replace(/\s+/g, "");
 }
@@ -74,7 +79,7 @@ export function checkTrainerConflict(
   if (
     !candidate.trainerTesterId &&
     candidate.trainerName &&
-    normalizeName(candidate.trainerName) === normalizeName(tester.fullName)
+    sameName(candidate.trainerName, tester.fullName)
   ) {
     return [
       {

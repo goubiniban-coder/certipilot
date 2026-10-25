@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { Field } from "@/components/forms/field";
 import { FormMessage } from "@/components/forms/form-message";
@@ -11,7 +12,7 @@ import { acceptInvitation } from "./actions";
 export function AcceptInvitationForm({ token, email }: { token: string; email: string }) {
   const [state, action] = useActionState(acceptInvitation, {});
   return (
-    <form action={action} className="grid gap-5" noValidate>
+    <ActionForm action={action} className="grid gap-5" noValidate>
       <FormMessage state={state} />
       <input type="hidden" name="token" value={token} />
       <div className="grid gap-2">
@@ -30,6 +31,6 @@ export function AcceptInvitationForm({ token, email }: { token: string; email: s
       <SubmitButton size="lg" pendingLabel="Activation…">
         Activer mon compte
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

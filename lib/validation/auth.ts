@@ -61,6 +61,8 @@ export type FormState = {
   ok?: boolean;
   message?: string;
   fieldErrors?: Record<string, string[] | undefined>;
+  /** Compliance problems found by lib/rules, shown as a list. */
+  violations?: { code: string; severity: "blocking" | "warning"; message: string }[];
 };
 
 /** Flattens Zod errors for display under each field. */

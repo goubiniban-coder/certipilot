@@ -3,6 +3,7 @@ import {
   checkTesterAssignment,
   checkTrainerConflict,
   normalizeSiret,
+  sameName,
   type AssignmentContext,
   type TesterProfile,
 } from "@/lib/rules/tester";
@@ -101,5 +102,13 @@ describe("checkTesterAssignment", () => {
 
   it("normalise les SIRET", () => {
     expect(normalizeSiret(" 123 456 789 00012 ")).toBe("12345678900012");
+  });
+});
+
+describe("sameName", () => {
+  it("compare des noms sans tenir compte des accents ni de l'ordre", () => {
+    expect(sameName("Jean-Marc DUPONT", "dupont jean marc")).toBe(true);
+    expect(sameName("Hélène Martin", "Helene Martin")).toBe(true);
+    expect(sameName("Jean Dupont", "Jeanne Dupont")).toBe(false);
   });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { CategorySelect } from "@/components/forms/category-select";
 import { Field } from "@/components/forms/field";
@@ -16,7 +17,7 @@ export function EquipmentForm({ equipment, options }: { equipment?: Equipment; o
   const errors = state.fieldErrors ?? {};
   const p = equipment?.id ?? "new";
   return (
-    <form action={action} className="grid gap-4" noValidate>
+    <ActionForm action={action} className="grid gap-4" noValidate>
       <FormMessage state={state} />
       {equipment ? <input type="hidden" name="id" value={equipment.id} /> : null}
       <Field id={`${p}-name`} label="Désignation" name="name" defaultValue={equipment?.name} errors={errors.name} />
@@ -42,6 +43,6 @@ export function EquipmentForm({ equipment, options }: { equipment?: Equipment; o
         </div>
       ) : null}
       <SubmitButton>{equipment ? "Enregistrer" : "Ajouter l'engin"}</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { Field } from "@/components/forms/field";
 import { FormMessage } from "@/components/forms/form-message";
@@ -15,7 +16,7 @@ export function InviteForm() {
   const [state, action] = useActionState(inviteUser, {});
   const errors = state.fieldErrors ?? {};
   return (
-    <form action={action} className="grid gap-4" noValidate>
+    <ActionForm action={action} className="grid gap-4" noValidate>
       <FormMessage state={state} />
       <Field label="Nom et prénom" name="fullName" required errors={errors.fullName} />
       <Field label="Adresse e-mail" name="email" type="email" required errors={errors.email} />
@@ -30,14 +31,14 @@ export function InviteForm() {
         </NativeSelect>
       </div>
       <SubmitButton pendingLabel="Création…">Créer l&apos;invitation</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function MemberRow({ member }: { member: Profile }) {
   const [state, action] = useActionState(updateMember, {});
   return (
-    <form action={action} className="flex flex-wrap items-center gap-3">
+    <ActionForm action={action} className="flex flex-wrap items-center gap-3">
       <input type="hidden" name="id" value={member.id} />
       <NativeSelect
         name="role"
@@ -68,6 +69,6 @@ export function MemberRow({ member }: { member: Profile }) {
           {state.message}
         </span>
       ) : null}
-    </form>
+    </ActionForm>
   );
 }

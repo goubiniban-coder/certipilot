@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionForm } from "@/components/forms/action-form";
 import { useActionState } from "react";
 import { Field } from "@/components/forms/field";
 import { FormMessage } from "@/components/forms/form-message";
@@ -11,7 +12,7 @@ export function OrganizationForm({ organization }: { organization: Organization 
   const [state, action] = useActionState(updateOrganization, {});
   const errors = state.fieldErrors ?? {};
   return (
-    <form action={action} className="grid gap-5" noValidate>
+    <ActionForm action={action} className="grid gap-5" noValidate>
       <FormMessage state={state} />
       <Field label="Nom de l'organisme" name="name" defaultValue={organization.name} errors={errors.name} />
       <Field label="SIRET" name="siret" defaultValue={organization.siret} disabled hint="Le SIRET ne peut pas être modifié." />
@@ -33,18 +34,18 @@ export function OrganizationForm({ organization }: { organization: Organization 
         hint="Délai après la fin de validité du dernier certificat et la dernière session du candidat."
       />
       <SubmitButton>Enregistrer</SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
 
 export function GdprPurgeForm() {
   const [state, action] = useActionState(runGdprPurge, {});
   return (
-    <form action={action} className="grid gap-4">
+    <ActionForm action={action} className="grid gap-4">
       <FormMessage state={state} />
       <SubmitButton variant="outline" pendingLabel="Anonymisation…">
         Anonymiser les candidats hors délai
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }
