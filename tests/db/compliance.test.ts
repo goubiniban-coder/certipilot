@@ -175,6 +175,22 @@ describe("parcours complet jusqu'au certificat", () => {
     expect(testId).toBeTruthy();
   });
 
+  it("le testeur ne modifie que le contrôle d'identité et le déroulé de l'épreuve", async () => {
+    for (const sql of [
+      `update public.practical_tests set test_date = test_date + 1 where id = $1`,
+      `update public.practical_tests set equipment_id = null where id = $1`,
+    ]) {
+      expect(await errorHint(asUser(testerUser.id, (db) => db.query(sql, [testId])))).toBe("FORBIDDEN");
+    }
+    expect(
+      await errorHint(
+        asUser(testerUser.id, (db) =>
+          db.query(`update public.session_candidates set created_at = now() - interval '1 day' where id = $1`, [ids.sc]),
+        ),
+      ),
+    ).toBe("FORBIDDEN");
+  });
+
   it("refuse de démarrer sans contrôle d'identité", async () => {
     const hint = await errorHint(
       asUser(testerUser.id, (db) =>
@@ -186,14 +202,15 @@ describe("parcours complet jusqu'au certificat", () => {
 
   it("le testeur contrôle l'identité, saisit la grille et signe", async () => {
     await asUser(testerUser.id, async (db) => {
+      // identity_verified_by is forced to the signed-in tester.
       const updated = await db.query(
         `update public.session_candidates
          set identity_document_type = 'cni', identity_document_number = 'X123', identity_verified = true,
-             identity_verified_at = now(), identity_verified_by = auth.uid()
-         where id = $1`,
+             identity_verified_at = now(), identity_verified_by = null
+         where id = $1 returning identity_verified_by`,
         [ids.sc],
       );
-      expect(updated.rowCount).toBe(1);
+      expect(updated.rows).toEqual([{ identity_verified_by: testerUser.id }]);
       await db.query(`update public.practical_tests set started_at = now() where id = $1`, [testId]);
       await db.query(
         `insert into public.practical_results (organization_id, practical_test_id, grid_item_id, points)
@@ -429,5 +446,39 @@ describe("versions des grilles", () => {
       );
     });
     expect(version).toEqual({ version: "2", is_active: "true", items: "1", old_active: "false" });
+  });
+});
+
+describe("purge RGPD", () => {
+  it("anonymise les candidats hors délai de conservation et rend leurs photos à supprimer", async () => {
+    const candidate = await asUser(org.adminId, (db) =>
+      one(
+        db,
+        `insert into public.candidates (organization_id, last_name, first_name, birth_date, photo_path)
+         values ($1, 'Ancien', 'Candidat', '1980-01-01', $2) returning id`,
+        [org.orgId, `${org.orgId}/candidates/ancien.jpg`],
+      ),
+    );
+    // Last change eleven years ago (the default retention is ten years).
+    const client = await pool.connect();
+    try {
+      await client.query("set session_replication_role = replica");
+      await client.query(`update public.candidates set updated_at = now() - interval '11 years' where id = $1`, [candidate.id]);
+    } finally {
+      await client.query("reset session_replication_role");
+      client.release();
+    }
+
+    expect(
+      await errorHint(asUser(testerUser.id, (db) => db.query(`select * from public.anonymize_expired_candidates()`))),
+    ).toBe("FORBIDDEN");
+    const purge = await asUser(org.adminId, (db) =>
+      one<{ anonymized_count: number; photo_paths: string[] }>(db, `select * from public.anonymize_expired_candidates()`),
+    );
+    expect(purge).toEqual({ anonymized_count: 1, photo_paths: [`${org.orgId}/candidates/ancien.jpg`] });
+    const after = await asUser(org.adminId, (db) =>
+      one(db, `select last_name, photo_path, anonymized_at is not null as done from public.candidates where id = $1`, [candidate.id]),
+    );
+    expect(after).toEqual({ last_name: "Anonymisé", photo_path: null, done: true });
   });
 });

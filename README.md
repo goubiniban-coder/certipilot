@@ -7,6 +7,27 @@ délivrance et vérification des certificats.
 > « Certipilot » est un nom de code provisoire, centralisé dans `lib/constants.ts`.
 > CACES® est une marque déposée de la Cnam : le nom de l'application ne doit pas la contenir.
 
+## Fonctionnalités
+
+- **Organisme et comptes** : inscription d'un OTC, invitations, trois rôles (responsable,
+  secrétariat, testeur). Chaque organisme ne voit que ses données (RLS Supabase).
+- **Référentiel** : les 8 recommandations (R.482 à R.490), leurs catégories, les durées de
+  validité et les grilles d'évaluation, modifiables et versionnées.
+- **Testeurs et engins** : habilitations, CACES® personnels délivrés par un autre OTC,
+  vérifications périodiques des engins, alertes à 60 jours.
+- **Sessions** : candidats (saisie ou import CSV), affectation des testeurs et des engins
+  avec tous les contrôles bloquants (un testeur n'évalue jamais un candidat qu'il a formé),
+  résultats de théorie.
+- **Application testeur** sur tablette, utilisable sans réseau.
+- **Certificats** PDF avec photo et QR code, page publique de vérification, révocation.
+- **Dossier d'audit** ZIP par session et **tableau de bord** (sessions à venir,
+  certificats délivrés, renouvellements à 6 mois par entreprise cliente).
+
+Structure : `app/` (pages et actions), `components/`, `lib/rules/` (règles métier pures,
+testées à 100 %), `lib/offline/` (base locale et synchronisation de l'application testeur),
+`lib/certificates/` et `lib/export/` (PDF et ZIP), `supabase/migrations/` (schéma, RLS,
+triggers de conformité).
+
 ## Prérequis
 
 - Node.js 20 ou plus récent, et pnpm 10 (`corepack enable`)
@@ -44,7 +65,7 @@ jeu de données `supabase/seed.sql`.
 | `pnpm test` | Tests unitaires (Vitest) |
 | `pnpm test:coverage` | Tests unitaires avec couverture ; les règles métier de `lib/rules/` doivent être couvertes à 100 % |
 | `pnpm test:db` | Tests de la base (isolation entre organisations par la RLS, triggers) ; nécessite `pnpm db:start` |
-| `pnpm test:e2e` | Parcours principaux dans un navigateur (Playwright) ; la première fois : `pnpm exec playwright install chromium` |
+| `pnpm test:e2e` | Parcours principaux dans un navigateur, sur ordinateur et sur tablette (Playwright) ; la première fois : `pnpm exec playwright install chromium`. Le rechargement de l'application testeur sans réseau n'est vérifié qu'avec une version de production (`pnpm build && pnpm start`, ce que fait l'intégration continue) |
 | `pnpm lint` et `pnpm typecheck` | Qualité du code |
 
 ### Tests de la base sans Docker
@@ -124,6 +145,32 @@ horaires, score), la grille de chaque épreuve critère par critère, les signat
 certificats PDF et le journal des modifications (qui a fait quoi, quand). Chaque export est
 lui-même tracé dans le journal.
 
-## Déploiement
+## Déploiement (Vercel + Supabase, données en Europe)
 
-Le déploiement complet (Vercel et Supabase en Europe) est décrit à la fin du projet.
+1. **Supabase** : créez un projet sur [supabase.com](https://supabase.com) dans la région
+   **West EU (Paris)** (ou Frankfurt). Notez l'URL du projet, la clé `anon` et la clé
+   `service_role` (Project Settings › API).
+2. **Base de données** : depuis le dossier du projet,
+   ```bash
+   pnpm supabase login
+   pnpm supabase link --project-ref <référence-du-projet>
+   pnpm supabase db push      # applique supabase/migrations, sans les données de démo
+   ```
+   Ne lancez jamais `supabase/seed.sql` en production.
+3. **Authentification** (Authentication › URL Configuration) : mettez l'adresse publique
+   de l'application dans « Site URL » et ajoutez-la aux « Redirect URLs ». Configurez un
+   envoi d'e-mails (SMTP) pour les confirmations et les invitations.
+4. **Vercel** : importez le dépôt GitHub sur [vercel.com](https://vercel.com) (framework
+   Next.js détecté automatiquement). `vercel.json` place les fonctions à Paris (`cdg1`).
+   Ajoutez les variables d'environnement :
+   - `NEXT_PUBLIC_APP_URL` : l'adresse publique (utilisée dans les QR codes et les
+     invitations) ;
+   - `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` ;
+   - `SUPABASE_SERVICE_ROLE_KEY` (secrète, jamais exposée au navigateur).
+5. Ouvrez `/inscription` pour créer le premier organisme et son compte responsable, puis
+   invitez le secrétariat et les testeurs depuis « Utilisateurs ».
+
+Les photos, pièces d'identité, signatures et certificats sont dans des buckets privés,
+servis uniquement par des URL signées de courte durée. La durée de conservation des données
+des candidats se règle dans « Organisme » (10 ans par défaut) ; la purge RGPD anonymise les
+candidats hors délai et efface leurs photos.

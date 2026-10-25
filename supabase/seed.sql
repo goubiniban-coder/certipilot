@@ -125,7 +125,11 @@ begin
   -- History taken over from a previous tool: certificates issued about five years
   -- ago, so that the dashboard shows renewals. Inserted as they were issued then,
   -- with the compliance and audit triggers off (local demo data only).
-  set local session_replication_role = replica;
+  alter table public.sessions disable trigger user;
+  alter table public.session_candidates disable trigger user;
+  alter table public.practical_tests disable trigger user;
+  alter table public.certificates disable trigger user;
+  alter table public.certificate_categories disable trigger user;
   insert into public.sessions (id, organization_id, name, starts_on, ends_on, location, status)
   values (v_session_past, v_org, 'Session chariots (historique)', (current_date - interval '5 years')::date + 40,
           (current_date - interval '5 years')::date + 40, 'Plateforme logistique, Lille', 'closed');
@@ -160,6 +164,10 @@ begin
     insert into public.certificate_categories (organization_id, certificate_id, category_id, category_code, category_label, practical_test_id)
     select v_org, v_certificate, cat.id, cat.code, cat.label, v_test from public.categories cat where cat.id = v_r489_3;
   end loop;
-  set local session_replication_role = origin;
+  alter table public.sessions enable trigger user;
+  alter table public.session_candidates enable trigger user;
+  alter table public.practical_tests enable trigger user;
+  alter table public.certificates enable trigger user;
+  alter table public.certificate_categories enable trigger user;
 end;
 $$;
