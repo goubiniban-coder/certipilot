@@ -112,6 +112,16 @@ révoqué par le responsable, avec un motif, et la page de vérification affiche
 Les photos des candidats sont réenregistrées en JPEG (800 px maximum, sans métadonnées
 EXIF ni GPS) au moment de l'envoi.
 
+## Dossier d'audit
+
+Sur la page d'une session, le responsable du centre peut « Exporter le dossier d'audit
+(ZIP) ». L'archive contient, en CSV lisibles dans Excel : la session, les testeurs et leurs
+CACES® personnels, les engins et leur dernière vérification périodique, les candidats et
+leur contrôle d'identité, les résultats de théorie, les épreuves pratiques (testeur, engin,
+horaires, score), la grille de chaque épreuve critère par critère, les signatures, les
+certificats PDF et le journal des modifications (qui a fait quoi, quand). Chaque export est
+lui-même tracé dans le journal.
+
 ## Déploiement
 
 Le déploiement complet (Vercel et Supabase en Europe) est décrit à la fin du projet.

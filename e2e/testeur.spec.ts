@@ -159,4 +159,17 @@ test("épreuve hors connexion sur tablette, synchronisation puis certificat", as
   await publicPage.reload();
   await expect(publicPage.getByRole("heading", { name: "Révoqué" })).toBeVisible();
   await visitor.close();
+
+  // Audit ZIP of the session: grids, signatures, certificates and change log.
+  await page.goto(sessionUrl);
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("link", { name: "Exporter le dossier d'audit (ZIP)" }).click(),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/^audit-Terrain-.+\.zip$/);
+  const zip = await (await import("node:fs/promises")).readFile((await download.path())!);
+  expect(zip.subarray(0, 2).toString()).toBe("PK");
+  for (const entry of ["LISEZMOI.txt", "pratique.csv", "candidats.csv", "journal.csv", `grilles/Reussite${id}-Alex-R.489-3.csv`, `signatures/Reussite${id}-Alex-R.489-3.png`, "certificats/DEMO-"]) {
+    expect(zip.includes(entry), entry).toBe(true);
+  }
 });

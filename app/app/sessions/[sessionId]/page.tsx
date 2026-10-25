@@ -66,7 +66,7 @@ function RemoveButton({ sessionId, kind, id, label }: { sessionId: string; kind:
 
 export default async function SessionPage({ params }: { params: Promise<{ sessionId: string }> }) {
   const { sessionId } = await params;
-  await requireSession(["admin", "secretariat"]);
+  const user = await requireSession(["admin", "secretariat"]);
   const supabase = await createClient();
 
   const [{ data: session }, { data: sessionTesters }, { data: sessionEquipment }, { data: sessionCandidates }, { data: testers }, { data: equipment }, { data: candidates }, { data: recommendations }, categories, { data: certificates }] =
@@ -138,7 +138,18 @@ export default async function SessionPage({ params }: { params: Promise<{ sessio
             </Link>
           </>
         }
-        actions={<Badge variant="outline">{SESSION_STATUS_LABELS[session.status]}</Badge>}
+        actions={
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge variant="outline">{SESSION_STATUS_LABELS[session.status]}</Badge>
+            {user.profile.role === "admin" ? (
+              <Button asChild variant="outline">
+                <a href={`/app/sessions/${session.id}/export`} download>
+                  Exporter le dossier d&apos;audit (ZIP)
+                </a>
+              </Button>
+            ) : null}
+          </div>
+        }
       />
 
       <div className="grid gap-6">
