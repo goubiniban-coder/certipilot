@@ -397,3 +397,29 @@ describe("parcours complet jusqu'au certificat", () => {
     );
   });
 });
+
+describe("versions des grilles", () => {
+  it("une grille déjà utilisée ne se modifie plus : on crée une nouvelle version", async () => {
+    const items = JSON.stringify([{ label: "Critère", maxPoints: 100, eliminatory: false }]);
+    expect(
+      await errorHint(
+        asUser(org.adminId, (db) =>
+          db.query(`select public.save_grid($1, 'Grille', 70, $2::jsonb)`, [ids.grid, items]),
+        ),
+      ),
+    ).toBe("GRID_IN_USE");
+
+    const version = await asUser(org.adminId, async (db) => {
+      const { id } = await one(db, `select public.new_grid_version($1) as id`, [ids.grid]);
+      await db.query(`select public.save_grid($1, 'Grille v2', 75, $2::jsonb)`, [id, items]);
+      return one(
+        db,
+        `select g.version::text, g.is_active::text, (select count(*)::text from public.grid_items where grid_id = g.id) as items,
+                (select is_active::text from public.grids where id = $2) as old_active
+         from public.grids g where g.id = $1`,
+        [id, ids.grid],
+      );
+    });
+    expect(version).toEqual({ version: "2", is_active: "true", items: "1", old_active: "false" });
+  });
+});

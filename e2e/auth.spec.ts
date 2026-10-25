@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
-
-const DEMO_PASSWORD = "certipilot-demo";
+import { DEMO_PASSWORD } from "./helpers";
 
 test.describe("authentification et organisation", () => {
   test("le responsable du centre de démo se connecte et voit le back-office", async ({ page }) => {
