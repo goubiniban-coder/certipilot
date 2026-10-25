@@ -76,3 +76,39 @@ export interface GridItem {
   max_points: number;
   eliminatory: boolean;
 }
+
+export interface Tester {
+  id: string;
+  profile_id: string | null;
+  full_name: string;
+  email: string | null;
+  active: boolean;
+}
+
+export interface TesterQualification {
+  id: string;
+  tester_id: string;
+  category_id: string;
+  granted_on: string;
+  active: boolean;
+}
+
+export interface TesterPersonalCaces {
+  id: string;
+  tester_id: string;
+  category_id: string;
+  certificate_number: string;
+  issuer_name: string;
+  issuer_siret: string;
+  expires_on: string;
+}
+
+export interface Equipment {
+  id: string;
+  category_id: string;
+  name: string;
+  brand_model: string | null;
+  serial_number: string;
+  last_inspection_on: string | null;
+  active: boolean;
+}
