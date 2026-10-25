@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Certipilot
 
-## Getting Started
+Logiciel SaaS pour les organismes testeurs certifiés (OTC) CACES® : préparation des
+sessions de test, passage des tests sur tablette (y compris hors connexion), puis
+délivrance et vérification des certificats.
 
-First, run the development server:
+> « Certipilot » est un nom de code provisoire, centralisé dans `lib/constants.ts`.
+> CACES® est une marque déposée de la Cnam : le nom de l'application ne doit pas la contenir.
+
+## Prérequis
+
+- Node.js 20 ou plus récent, et pnpm 10 (`corepack enable`)
+- Docker, pour faire tourner Supabase en local
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.example .env.local
+pnpm db:start            # démarre Supabase en local (Postgres, Auth, Storage)
+pnpm supabase status     # affiche l'URL et les clés à copier dans .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Renseignez dans `.env.local` les valeurs `API URL`, `anon key` et `service_role key`
+affichées par `pnpm supabase status`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Lancer en local
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm dev
+```
 
-## Learn More
+L'application est disponible sur http://localhost:3000. Le Studio Supabase local est
+sur http://127.0.0.1:54323 et les e-mails envoyés (invitations) sont visibles dans
+Mailpit sur http://127.0.0.1:54324.
 
-To learn more about Next.js, take a look at the following resources:
+`pnpm db:reset` recrée la base à partir des migrations de `supabase/migrations` et du
+jeu de données `supabase/seed.sql`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tests
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Commande | Contenu |
+| --- | --- |
+| `pnpm test` | Tests unitaires (Vitest) |
+| `pnpm test:coverage` | Tests unitaires avec couverture ; les règles métier de `lib/rules/` doivent être couvertes à 100 % |
+| `pnpm test:db` | Tests de la base (isolation entre organisations par la RLS, triggers) ; nécessite `pnpm db:start` |
+| `pnpm test:e2e` | Parcours principaux dans un navigateur (Playwright) ; la première fois : `pnpm exec playwright install chromium` |
+| `pnpm lint` et `pnpm typecheck` | Qualité du code |
 
-## Deploy on Vercel
+## Déploiement
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Le déploiement complet (Vercel et Supabase en Europe) est décrit à la fin du projet.
