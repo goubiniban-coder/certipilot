@@ -70,7 +70,28 @@ C'est ce que fait l'intégration continue.
 - `supabase/seed.sql` : un organisme de démonstration, pour le développement local
   uniquement. Comptes (mot de passe `certipilot-demo`) :
   `admin@demo.certipilot.test`, `secretariat@demo.certipilot.test`,
-  `testeur1@demo.certipilot.test`, `testeur2@demo.certipilot.test`.
+  `testeur1@demo.certipilot.test`, `testeur2@demo.certipilot.test`. La « Session du jour
+  (démo) » attribue deux épreuves pratiques du jour à `testeur1` (Marc Testeur).
+
+## Application testeur hors connexion
+
+Le testeur se connecte sur la tablette et arrive sur `/testeur` : la liste de ses
+candidats du jour. Tant que la tablette a du réseau, les épreuves du jour (grilles,
+photos des candidats) sont téléchargées dans la tablette (IndexedDB, via Dexie).
+
+Ensuite tout se fait sans réseau : contrôle d'identité (type et numéro de pièce, case
+« vérifié » horodatée), démarrage de l'épreuve, notation critère par critère avec le
+score en direct et le chronomètre, résultat, puis signature au doigt. Chaque action est
+mise dans une file d'attente et envoyée dans l'ordre dès le retour du réseau. Le serveur
+refait tous les contrôles (identité, testeur, engin, calcul du résultat) : si une
+modification est refusée, elle reste sur la tablette avec le message d'erreur et peut
+être renvoyée une fois le problème corrigé.
+
+L'indicateur en haut de l'écran affiche « Hors ligne », « Synchronisation en cours »,
+« Synchronisé » ou « Erreur de synchronisation ». Avec une version de production
+(`pnpm build && pnpm start`), un service worker (`public/sw.js`) garde aussi la page
+disponible hors connexion : elle se recharge même sans réseau, et peut être installée
+sur l'écran d'accueil de la tablette.
 
 ## Déploiement
 

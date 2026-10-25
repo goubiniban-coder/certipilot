@@ -20,6 +20,7 @@ declare
   v_client1 uuid := '00000000-0000-4000-8000-000000000301';
   v_client2 uuid := '00000000-0000-4000-8000-000000000302';
   v_session uuid := '00000000-0000-4000-8000-000000000401';
+  v_session_today uuid := '00000000-0000-4000-8000-000000000402';
   v_r489_3 uuid;
   v_r486_b uuid;
   v_user record;
@@ -98,5 +99,21 @@ begin
 
   insert into public.sessions (id, organization_id, name, starts_on, ends_on, location, status)
   values (v_session, v_org, 'Session chariots R.489', current_date + 7, current_date + 7, 'Plateforme logistique, Lille', 'planned');
+
+  -- Today's session, so that the tester app (testeur1) has candidates to evaluate.
+  insert into public.sessions (id, organization_id, name, starts_on, ends_on, location, status)
+  values (v_session_today, v_org, 'Session du jour (démo)', current_date, current_date, 'Plateforme logistique, Lille', 'planned');
+  insert into public.session_testers (organization_id, session_id, tester_id) values (v_org, v_session_today, v_tester1);
+  insert into public.session_equipment (organization_id, session_id, equipment_id)
+  select v_org, v_session_today, e.id from public.equipment e where e.organization_id = v_org and e.serial_number = 'CF-0001';
+  insert into public.session_candidates (organization_id, session_id, candidate_id)
+  select v_org, v_session_today, c.id from public.candidates c
+  where c.organization_id = v_org and c.last_name in ('Martin', 'Petit');
+  insert into public.practical_tests (organization_id, session_candidate_id, category_id, grid_id, tester_id, equipment_id, test_date)
+  select v_org, sc.id, v_r489_3, g.id, v_tester1, e.id, current_date
+  from public.session_candidates sc
+  join public.grids g on g.organization_id = v_org and g.category_id = v_r489_3 and g.is_active
+  join public.equipment e on e.organization_id = v_org and e.serial_number = 'CF-0001'
+  where sc.session_id = v_session_today;
 end;
 $$;
