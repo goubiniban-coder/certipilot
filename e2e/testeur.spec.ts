@@ -48,7 +48,7 @@ async function checkIdentityAndStart(page: Page) {
   await expect(page.getByLabel("Chronomètre")).toBeVisible();
 }
 
-test("le testeur fait passer une épreuve hors connexion puis synchronise", async ({ page, browser }) => {
+test("épreuve hors connexion sur tablette, synchronisation puis certificat", async ({ page, browser }) => {
   test.setTimeout(120_000);
   // Letters only: candidate names are compared without digits.
   const id = Date.now().toString().slice(-6).replace(/\d/g, (d) => "abcdefghij"[Number(d)]!);
@@ -126,4 +126,37 @@ test("le testeur fait passer une épreuve hors connexion puis synchronise", asyn
   await expect(alex.getByText("Identité contrôlée")).toBeVisible();
   await expect(alex.getByText("Réussi · 95/100")).toBeVisible();
   await expect(page.getByRole("region", { name: `Sam Faute${id}` }).getByText("Identité contrôlée")).toBeVisible();
+
+  // Theory passed + practical passed: the back office issues the certificate.
+  await alex.getByText("Saisir un résultat de théorie").click();
+  await alex.getByLabel("Recommandation").selectOption({ label: "R.489 · Chariots de manutention automoteurs à conducteur porté" });
+  await alex.getByLabel("Score").fill("30");
+  await alex.getByRole("button", { name: "Enregistrer" }).click();
+  await expect(alex.getByText("Résultat enregistré : théorie réussie.")).toBeVisible();
+  await alex.getByRole("button", { name: "Délivrer le certificat R.489" }).click();
+
+  await expect(page.getByRole("heading", { name: /^Certificat DEMO-\d{4}-\d{6}$/ })).toBeVisible();
+  await expect(page.getByText("Cat. 3")).toBeVisible();
+  await expect(page.getByText("Valide", { exact: true })).toBeVisible();
+
+  const pdf = await page.request.get(`${page.url()}/pdf`);
+  expect(pdf.ok()).toBe(true);
+  expect((await pdf.body()).subarray(0, 5).toString()).toBe("%PDF-");
+
+  const verifyUrl = await page.getByRole("link", { name: "Page de vérification publique" }).getAttribute("href");
+  const visitor = await browser.newContext();
+  const publicPage = await visitor.newPage();
+  await publicPage.goto(verifyUrl!);
+  await expect(publicPage.getByRole("heading", { name: "Valide" })).toBeVisible();
+  await expect(publicPage.getByText(`Alex REUSSITE${id.toUpperCase()}`)).toBeVisible();
+
+  // Revocation: admin only, with a reason; the public page follows at once.
+  await page.getByRole("button", { name: "Révoquer le certificat" }).click();
+  await expect(page.getByText("Indiquez le motif de la révocation")).toBeVisible();
+  await page.getByLabel("Motif de la révocation").fill("Erreur d'identité constatée après coup");
+  await page.getByRole("button", { name: "Révoquer le certificat" }).click();
+  await expect(page.getByText("Motif : Erreur d'identité constatée après coup")).toBeVisible();
+  await publicPage.reload();
+  await expect(publicPage.getByRole("heading", { name: "Révoqué" })).toBeVisible();
+  await visitor.close();
 });

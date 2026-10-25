@@ -268,6 +268,14 @@ describe("parcours complet jusqu'au certificat", () => {
     await asUser(org.adminId, (db) =>
       db.query(`update public.theory_results set score = 32 where session_candidate_id = $1`, [ids.sc]),
     );
+    // Testers never issue certificates.
+    expect(
+      await errorHint(
+        asUser(testerUser.id, (db) =>
+          db.query(`select public.issue_certificate($1, $2)`, [ids.sc, ids.recommendation]),
+        ),
+      ),
+    ).toBe("FORBIDDEN");
     const cert = await asUser(org.adminId, async (db) => {
       const { id } = await one(db, `select public.issue_certificate($1, $2) as id`, [
         ids.sc,

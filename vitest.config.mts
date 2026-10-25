@@ -2,6 +2,8 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
+  // tsconfig keeps JSX for Next.js ("preserve"); tests need it compiled.
+  oxc: { jsx: { runtime: "automatic" } },
   test: {
     include: ["tests/unit/**/*.test.ts", "lib/**/*.test.ts"],
     environment: "node",

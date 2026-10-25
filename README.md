@@ -93,6 +93,25 @@ L'indicateur en haut de l'écran affiche « Hors ligne », « Synchronisation en
 disponible hors connexion : elle se recharge même sans réseau, et peut être installée
 sur l'écran d'accueil de la tablette.
 
+## Certificats
+
+Sur la page d'une session, le bouton « Délivrer le certificat » apparaît pour un candidat
+dès que la théorie (QCM, et QCM-IPR pour la R.482) et au moins une catégorie pratique sont
+réussies. La base refait ces contrôles, numérote le certificat (`PRÉFIXE-ANNÉE-000001`) et
+calcule la fin de validité depuis le référentiel (5 ans par défaut, 10 ans pour la R.482,
+modifiable par recommandation ou par catégorie). Seuls le responsable et le secrétariat
+délivrent.
+
+Le PDF (`lib/certificates/`) est généré côté serveur avec @react-pdf/renderer : photo du
+candidat, catégories obtenues uniquement, dates, et un QR code vers la page publique
+`/verifier/[jeton]`. Il est rangé dans le bucket privé `certificates` et téléchargé par une
+URL signée d'une minute. Un certificat ne se modifie jamais : il peut seulement être
+révoqué par le responsable, avec un motif, et la page de vérification affiche alors
+« Révoqué ».
+
+Les photos des candidats sont réenregistrées en JPEG (800 px maximum, sans métadonnées
+EXIF ni GPS) au moment de l'envoi.
+
 ## Déploiement
 
 Le déploiement complet (Vercel et Supabase en Europe) est décrit à la fin du projet.

@@ -12,6 +12,7 @@ import { addDays, compareDates, expiryState, inspectionDueDate } from "@/lib/rul
 import { createClient } from "@/lib/supabase/server";
 import { SESSION_STATUS_LABELS, type TestSession } from "@/lib/types";
 import { CsvImportForm } from "../../candidats/forms";
+import { IssueCertificateForm } from "../../certificats/forms";
 import { deletePracticalTest, removeSessionResource } from "../actions";
 import {
   AddCandidateForm,
@@ -68,7 +69,7 @@ export default async function SessionPage({ params }: { params: Promise<{ sessio
   await requireSession(["admin", "secretariat"]);
   const supabase = await createClient();
 
-  const [{ data: session }, { data: sessionTesters }, { data: sessionEquipment }, { data: sessionCandidates }, { data: testers }, { data: equipment }, { data: candidates }, { data: recommendations }, categories] =
+  const [{ data: session }, { data: sessionTesters }, { data: sessionEquipment }, { data: sessionCandidates }, { data: testers }, { data: equipment }, { data: candidates }, { data: recommendations }, categories, { data: certificates }] =
     await Promise.all([
       supabase.from("sessions").select("id, name, starts_on, ends_on, location, status, notes").eq("id", sessionId).maybeSingle<TestSession>(),
       supabase.from("session_testers").select("tester_id, testers(id, full_name)").eq("session_id", sessionId),
@@ -85,6 +86,7 @@ export default async function SessionPage({ params }: { params: Promise<{ sessio
       supabase.from("candidates").select("id, first_name, last_name, birth_date").is("anonymized_at", null).order("last_name").limit(500),
       supabase.from("recommendations").select("id, code, label, requires_ipr").order("code"),
       getCategoryOptions(),
+      supabase.from("certificates").select("id, number, candidate_id, recommendation_id, revoked_at").eq("session_id", sessionId),
     ]);
   if (!session) notFound();
 
@@ -110,6 +112,18 @@ export default async function SessionPage({ params }: { params: Promise<{ sessio
     equipment: assignedEquipment.filter((e) => e.category_id === c.id).map((e) => ({ id: e.id, label: `${e.name} (n° ${e.serial_number})` })),
   }));
   const recommendationCode = (id: string) => recommendations?.find((r) => r.id === id)?.code ?? "";
+
+  /** Recommendations for which the candidate passed the theory and at least one practical category. */
+  const certifiable = (row: SessionCandidateRow) =>
+    (recommendations ?? []).filter((r) => {
+      const theoryOk = (r.requires_ipr ? ["qcm", "qcm_ipr"] : ["qcm"]).every((kind) =>
+        row.theory_results.some((t) => t.recommendation_id === r.id && t.kind === kind && t.passed),
+      );
+      const practicalOk = row.practical_tests.some(
+        (pt) => pt.status === "passed" && categories.find((c) => c.id === pt.category_id)?.recommendationId === r.id,
+      );
+      return theoryOk && practicalOk;
+    });
 
   return (
     <>
@@ -237,6 +251,33 @@ export default async function SessionPage({ params }: { params: Promise<{ sessio
                     ))}
                   </ul>
                 ) : null}
+
+                {(() => {
+                  const issued = (certificates ?? []).filter((c) => c.candidate_id === row.candidates.id);
+                  const toIssue = certifiable(row).filter((r) => !issued.some((c) => c.recommendation_id === r.id));
+                  if (!issued.length && !toIssue.length) return null;
+                  return (
+                    <div className="flex flex-wrap items-start gap-3">
+                      {issued.map((c) => (
+                        <Button key={c.id} asChild variant="outline">
+                          <Link href={`/app/certificats/${c.id}`}>
+                            Certificat {c.number}
+                            {c.revoked_at ? " (révoqué)" : ""}
+                          </Link>
+                        </Button>
+                      ))}
+                      {toIssue.map((r) => (
+                        <IssueCertificateForm
+                          key={r.id}
+                          sessionId={session.id}
+                          sessionCandidateId={row.id}
+                          recommendationId={r.id}
+                          recommendationCode={r.code}
+                        />
+                      ))}
+                    </div>
+                  );
+                })()}
 
                 <details>
                   <summary className="cursor-pointer font-semibold text-primary">Planifier une épreuve pratique</summary>

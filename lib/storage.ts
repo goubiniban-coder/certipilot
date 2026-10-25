@@ -1,5 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import sharp from "sharp";
 import { createClient } from "@/lib/supabase/server";
 
 /** Private buckets (see supabase/migrations/*_storage.sql). */
@@ -27,13 +28,32 @@ export function photoError(file: File): string | null {
   return null;
 }
 
-/** Uploads a photo under "<organization_id>/<folder>/<uuid>.<ext>" as the signed-in user. */
+/**
+ * Re-encodes a photo as a JPEG of at most 800 px, turned upright and without
+ * metadata (EXIF, GPS): smaller files, no hidden personal data, and a format
+ * the certificate PDF can embed.
+ */
+export async function normalizePhoto(input: ArrayBuffer | Buffer): Promise<Buffer> {
+  return sharp(Buffer.from(input as ArrayBuffer))
+    .rotate()
+    .resize(800, 800, { fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: 85 })
+    .toBuffer();
+}
+
+/** Uploads a photo under "<organization_id>/<folder>/<uuid>.jpg" as the signed-in user. */
 export async function uploadPhoto(organizationId: string, folder: string, file: File) {
-  const path = `${organizationId}/${folder}/${randomUUID()}.${IMAGE_TYPES[file.type]}`;
+  const path = `${organizationId}/${folder}/${randomUUID()}.jpg`;
+  let body: Buffer;
+  try {
+    body = await normalizePhoto(await file.arrayBuffer());
+  } catch {
+    throw new Error("Cette image ne peut pas être lue. Essayez une autre photo.");
+  }
   const supabase = await createClient();
   const { error } = await supabase.storage
     .from("candidate-photos")
-    .upload(path, file, { contentType: file.type, upsert: false });
+    .upload(path, body, { contentType: "image/jpeg", upsert: false });
   if (error) throw new Error("L'envoi de la photo a échoué. Réessayez.");
   return path;
 }
