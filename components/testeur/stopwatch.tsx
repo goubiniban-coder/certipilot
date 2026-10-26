@@ -26,14 +26,14 @@ export function Stopwatch({ startedAt, plannedMinutes }: { startedAt: string; pl
     <div
       aria-label="Chronomètre"
       className={cn(
-        "inline-flex items-center gap-2 rounded-md border-2 px-3 py-1 font-mono text-2xl font-bold tabular-nums",
-        over ? "border-warning text-warning" : "border-input",
+        "inline-flex items-center gap-2 rounded-xl px-4 py-2 font-display text-3xl font-bold tabular-nums",
+        over ? "bg-warning text-warning-foreground" : "bg-marine text-white",
       )}
     >
       <Timer className="size-6" aria-hidden />
       {formatDuration(elapsed)}
       {plannedMinutes !== null ? (
-        <span className="font-sans text-sm font-normal text-muted-foreground">/ {plannedMinutes} min prévues</span>
+        <span className="font-sans text-sm font-normal opacity-80">/ {plannedMinutes} min prévues</span>
       ) : null}
     </div>
   );

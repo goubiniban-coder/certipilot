@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 import { ChevronRight, RefreshCw } from "lucide-react";
+import { FamilyPicto } from "@/components/brand/family-picto";
+import { Logo } from "@/components/brand/logo";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,23 +67,25 @@ export function TesterApp({
   }
 
   return (
-    <main className="mx-auto grid max-w-4xl gap-6 px-4 py-6">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            {APP_NAME} · {organizationName}
-          </p>
-          <p className="text-xl font-semibold">{testerName}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
+    <div className="min-h-screen bg-background">
+      <header className="bg-marine text-white">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-4 py-3">
+          <Logo size={36} />
+          <div className="min-w-0 flex-1">
+            <p className="font-display text-xl leading-tight font-bold">
+              {APP_NAME} · {organizationName}
+            </p>
+            <p className="truncate text-sm text-white/75">{testerName}</p>
+          </div>
           <SyncIndicator state={sync.state} pending={sync.pending} />
           <form ref={signOutForm} action="/auth/deconnexion" method="post">
-            <Button type="button" variant="ghost" size="sm" onClick={signOut}>
+            <Button type="button" variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white" onClick={signOut}>
               Se déconnecter
             </Button>
           </form>
         </div>
       </header>
+    <main className="mx-auto grid max-w-5xl gap-6 px-4 py-6">
 
       {sync.rejected.length ? (
         <Alert variant="destructive">
@@ -121,7 +125,7 @@ export function TesterApp({
       ) : (
         <section aria-labelledby="today-title" className="grid gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h1 id="today-title" className="text-3xl font-bold">
+            <h1 id="today-title" className="text-4xl font-bold">
               Candidats du jour
             </h1>
             <Button variant="outline" onClick={() => void sync.syncNow()} disabled={sync.state === "offline"}>
@@ -148,10 +152,11 @@ export function TesterApp({
                     <button
                       type="button"
                       onClick={() => setSelectedId(test.id)}
-                      className="flex w-full items-center gap-4 rounded-md border-2 border-input bg-background p-4 text-left hover:bg-accent focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/50"
+                      className="flex w-full items-center gap-4 rounded-2xl border bg-card p-4 text-left shadow-xs hover:border-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/50"
                     >
+                      <FamilyPicto code={test.category.recommendationCode} size={56} />
                       <span className="grid flex-1 gap-1">
-                        <span className="text-xl font-semibold">{candidateName(test)}</span>
+                        <span className="font-display text-2xl leading-tight font-semibold">{candidateName(test)}</span>
                         <span>
                           {test.category.recommendationCode} cat. {test.category.code} ·{" "}
                           {test.equipment ? `${test.equipment.name} (n° ${test.equipment.serialNumber})` : "engin non renseigné"}
@@ -172,5 +177,6 @@ export function TesterApp({
         </section>
       )}
     </main>
+    </div>
   );
 }

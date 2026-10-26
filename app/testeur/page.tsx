@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "Testeur" },
 };
 
-export const viewport: Viewport = { themeColor: "#0b3d91" };
+export const viewport: Viewport = { themeColor: "#172554" };
 
 export default async function TesterHomePage() {
   const session = await requireSession(["tester", "admin"]);

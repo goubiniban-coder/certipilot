@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
+import { FamilyPicto } from "@/components/brand/family-picto";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,23 +44,23 @@ function CandidatePhoto({ photo, name }: { photo: Blob | null; name: string }) {
   }, [url]);
   if (!url) {
     return (
-      <div className="flex size-32 items-center justify-center rounded-md border-2 border-dashed text-center text-sm text-muted-foreground">
+      <div className="flex size-32 items-center justify-center rounded-xl border-2 border-dashed text-center text-sm text-muted-foreground">
         Pas de photo
       </div>
     );
   }
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={url} alt={`Photo de ${name}`} className="size-32 rounded-md object-cover" />;
+  return <img src={url} alt={`Photo de ${name}`} className="size-32 rounded-xl object-cover" />;
 }
 
 function Header({ test }: { test: OfflineTest }) {
   const name = candidateName(test);
   return (
     <Card>
-      <CardContent className="flex flex-wrap items-center gap-4 pt-6">
+      <CardContent className="flex flex-wrap items-center gap-4">
         <CandidatePhoto photo={test.candidate.photo} name={name} />
-        <div className="grid gap-1">
-          <h1 className="text-3xl font-bold">{name}</h1>
+        <div className="grid min-w-0 flex-1 gap-1">
+          <h1 className="text-4xl font-bold">{name}</h1>
           <p className="text-lg">Né(e) le {formatDate(test.candidate.birthDate)}</p>
           <p className="text-lg">
             <strong>
@@ -75,6 +76,7 @@ function Header({ test }: { test: OfflineTest }) {
             {test.sessionLocation ? ` · ${test.sessionLocation}` : ""}
           </p>
         </div>
+        <FamilyPicto code={test.category.recommendationCode} size={72} />
       </CardContent>
     </Card>
   );
@@ -188,13 +190,18 @@ function StartStep({ test, onChanged }: { test: OfflineTest; onChanged: () => vo
 function ScorePanel({ outcome, passScore }: { outcome: PracticalOutcome; passScore: number }) {
   const tone =
     outcome.status === "failed" ? "destructive" : outcome.status === "passed" ? "success" : "outline";
+  const barColor = outcome.status === "failed" ? "bg-destructive" : "bg-success";
   return (
-    <div className="grid gap-1" aria-label="Score en direct">
+    <div className="grid min-w-64 flex-1 gap-2" aria-label="Score en direct">
       <div className="flex items-baseline gap-3">
-        <span className="text-4xl font-bold tabular-nums">{outcome.score}/100</span>
+        <span className="font-display text-5xl leading-none font-bold tabular-nums">{outcome.score}/100</span>
         <Badge variant={tone}>
           {outcome.status === "passed" ? "Réussi" : outcome.status === "failed" ? "Échoué" : "En cours"}
         </Badge>
+      </div>
+      <div className="relative h-3 rounded-full bg-secondary" aria-hidden="true">
+        <div className={cn("h-full rounded-full", barColor)} style={{ width: `${Math.min(100, Math.max(0, outcome.score))}%` }} />
+        <div className="absolute -top-1 h-5 w-0.5 rounded bg-foreground" style={{ left: `${passScore}%` }} />
       </div>
       <span className="text-sm text-muted-foreground">
         {outcome.points} / {outcome.maxPoints} points · minimum {passScore}/100
@@ -203,13 +210,48 @@ function ScorePanel({ outcome, passScore }: { outcome: PracticalOutcome; passSco
   );
 }
 
+const STEPS = ["Identité", "Démarrage", "Grille", "Signature"] as const;
+
+function Stepper({ current }: { current: number }) {
+  return (
+    <ol aria-label="Étapes de l'épreuve" className="flex flex-wrap items-center gap-2">
+      {STEPS.map((label, index) => {
+        const done = index < current;
+        const active = index === current;
+        return (
+          <li
+            key={label}
+            aria-current={active ? "step" : undefined}
+            className={cn(
+              "flex items-center gap-2 rounded-full py-1.5 pr-4 pl-1.5 text-base font-semibold",
+              active ? "bg-primary text-primary-foreground" : done ? "text-success" : "text-muted-foreground",
+            )}
+          >
+            <span
+              className={cn(
+                "flex size-7 items-center justify-center rounded-full text-sm font-bold",
+                done ? "bg-success text-success-foreground" : active ? "bg-yellow text-yellow-foreground" : "bg-secondary text-secondary-foreground",
+              )}
+            >
+              {done ? <Check className="size-4" aria-hidden="true" /> : index + 1}
+            </span>
+            {label}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function CriterionRow({
   item,
   mark,
+  next,
   onMark,
 }: {
   item: OfflineGridItem;
   mark: LocalMark | undefined;
+  next: boolean;
   onMark: (mark: LocalMark | null) => void;
 }) {
   const inputId = `item-${item.id}`;
@@ -242,13 +284,20 @@ function CriterionRow({
     <li
       aria-label={item.label}
       className={cn(
-        "grid gap-3 rounded-md border-2 p-4",
-        mark?.eliminatoryFault ? "border-destructive" : mark ? "border-success" : "border-input",
+        "grid gap-3 rounded-xl border-2 bg-card p-4",
+        mark?.eliminatoryFault
+          ? "border-destructive"
+          : mark
+            ? "border-success"
+            : next
+              ? "border-yellow ring-4 ring-yellow/40"
+              : "border-border",
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="text-lg font-semibold">
+            {mark && !mark.eliminatoryFault ? <Check className="mr-1 inline size-5 text-success" aria-hidden="true" /> : null}
             {item.position}. {item.label}
           </p>
           {item.description ? <p className="text-muted-foreground">{item.description}</p> : null}
@@ -311,6 +360,7 @@ function CriterionRow({
 
 function GridStep({ test, onFinish }: { test: OfflineTest; onFinish: () => void }) {
   const outcome = outcomeOf(test);
+  const nextId = test.grid.items.find((item) => !test.marks[item.id])?.id;
 
   async function mark(itemId: string, value: LocalMark | null) {
     const db = testerDb();
@@ -326,7 +376,7 @@ function GridStep({ test, onFinish }: { test: OfflineTest; onFinish: () => void 
 
   return (
     <div className="grid gap-4">
-      <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 rounded-md border-2 bg-background p-4 shadow">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-card p-4 shadow-md">
         <ScorePanel outcome={outcome} passScore={test.grid.passScore} />
         <Stopwatch startedAt={test.startedAt!} plannedMinutes={test.category.durationMinutes} />
       </div>
@@ -336,6 +386,7 @@ function GridStep({ test, onFinish }: { test: OfflineTest; onFinish: () => void 
             key={item.id}
             item={item}
             mark={test.marks[item.id]}
+            next={item.id === nextId}
             onMark={(value) => void mark(item.id, value)}
           />
         ))}
@@ -475,11 +526,23 @@ export function TestView({
   const [finishing, setFinishing] = useState(false);
 
   let body: React.ReactNode;
-  if (test.conclusion || test.serverSigned) body = <DoneView test={test} pendingSync={pendingSync} />;
-  else if (!test.identity) body = <IdentityStep test={test} onChanged={onChanged} />;
-  else if (!test.startedAt) body = <StartStep test={test} onChanged={onChanged} />;
-  else if (finishing) body = <ConcludeStep test={test} onBack={() => setFinishing(false)} onChanged={onChanged} />;
-  else body = <GridStep test={test} onFinish={() => setFinishing(true)} />;
+  let step: number;
+  if (test.conclusion || test.serverSigned) {
+    body = <DoneView test={test} pendingSync={pendingSync} />;
+    step = STEPS.length;
+  } else if (!test.identity) {
+    body = <IdentityStep test={test} onChanged={onChanged} />;
+    step = 0;
+  } else if (!test.startedAt) {
+    body = <StartStep test={test} onChanged={onChanged} />;
+    step = 1;
+  } else if (finishing) {
+    body = <ConcludeStep test={test} onBack={() => setFinishing(false)} onChanged={onChanged} />;
+    step = 3;
+  } else {
+    body = <GridStep test={test} onFinish={() => setFinishing(true)} />;
+    step = 2;
+  }
 
   return (
     <div className="grid gap-4">
@@ -488,6 +551,7 @@ export function TestView({
           <ArrowLeft aria-hidden /> Candidats du jour
         </Button>
       </div>
+      <Stepper current={step} />
       <Header test={test} />
       {body}
     </div>
