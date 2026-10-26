@@ -10,7 +10,7 @@ export function startScene(canvas) {
   try {
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
   } catch (err) { return function () {}; }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -353,6 +353,7 @@ export function startScene(canvas) {
   function wave(x) { return Math.sin(x) * 0.5 + 0.5; }
   function frame() {
     if (stopped) return;
+    if (document.hidden) { clock.getDelta(); raf = requestAnimationFrame(frame); return; }
     var dt = Math.min(clock.getDelta(), 0.05);
     tt += reduce ? 0 : dt;
     prog += (target - prog) * (reduce ? 1 : Math.min(1, dt * 4));

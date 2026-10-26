@@ -42,6 +42,9 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+  if (error?.code === "email_not_confirmed") {
+    return { message: "Adresse e-mail non confirmée. Ouvrez le lien reçu par e-mail, puis reconnectez-vous." };
+  }
   if (error || !data.user) {
     return { message: "Adresse e-mail ou mot de passe incorrect." };
   }

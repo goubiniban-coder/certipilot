@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { startScene } from "./scene";
 import "./vitrine.css";
 
 const BANDEAU: [string, string][] = [
@@ -21,8 +20,18 @@ export function Vitrine({ name }: { name: string }) {
 
   useEffect(() => {
     const canvas = document.getElementById("scene") as HTMLCanvasElement | null;
-    const stop = canvas ? startScene(canvas) : () => {};
-    return stop;
+    let stop = () => {};
+    let cancelled = false;
+    // three.js is loaded after the first paint so the text and buttons show up at once.
+    if (canvas) {
+      void import("./scene").then(({ startScene }) => {
+        if (!cancelled) stop = startScene(canvas);
+      });
+    }
+    return () => {
+      cancelled = true;
+      stop();
+    };
   }, []);
 
   useEffect(() => {
