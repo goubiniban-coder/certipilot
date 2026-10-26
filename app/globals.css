@@ -7,29 +7,32 @@
  */
 :root {
   --radius: 0.5rem;
-  --background: #ffffff;
-  --foreground: #0b1220;
+  --background: #f1f5f9;
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #0b1220;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #0b1220;
-  --primary: #0b3d91;
+  --popover-foreground: #0f172a;
+  --primary: #1e3a8a;
   --primary-foreground: #ffffff;
-  --secondary: #e7ecf3;
-  --secondary-foreground: #0b1220;
-  --muted: #eef1f5;
-  --muted-foreground: #3a4556;
-  --accent: #dbe6f7;
-  --accent-foreground: #0b1220;
-  --destructive: #b00020;
+  --secondary: #e2e8f0;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --accent: #dbeafe;
+  --accent-foreground: #0f172a;
+  --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
-  --success: #0a6b2d;
+  --success: #15803d;
   --success-foreground: #ffffff;
-  --warning: #8a4b00;
+  --warning: #c2410c;
   --warning-foreground: #ffffff;
-  --border: #7c8798;
-  --input: #5b6678;
-  --ring: #0b3d91;
+  --border: #cbd5e1;
+  --input: #64748b;
+  --ring: #1e3a8a;
+  --marine: #172554;
+  --yellow: #facc15;
+  --yellow-foreground: #1c1917;
 }
 
 @theme inline {
@@ -59,7 +62,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  --color-marine: var(--marine);
+  --color-yellow: var(--yellow);
+  --color-yellow-foreground: var(--yellow-foreground);
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: var(--font-barlow-condensed), var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -71,5 +78,11 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    text-wrap: balance;
   }
 }

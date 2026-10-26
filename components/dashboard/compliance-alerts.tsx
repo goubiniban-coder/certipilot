@@ -18,7 +18,7 @@ export function ComplianceAlerts({ alerts }: { alerts: ComplianceAlert[] }) {
         ) : (
           <ul className="grid gap-3">
             {alerts.map((alert) => (
-              <li key={`${alert.kind}-${alert.id}`} className="flex flex-wrap items-center gap-3 rounded-md border-2 p-3">
+              <li key={`${alert.kind}-${alert.id}`} className="flex flex-wrap items-center gap-3 rounded-xl border border-warning/40 bg-orange-50 p-3">
                 <div className="grid">
                   <Link href={alert.href} className="font-semibold text-primary underline">
                     {alert.title}
