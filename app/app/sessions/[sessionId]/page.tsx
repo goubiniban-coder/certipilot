@@ -141,6 +141,11 @@ export default async function SessionPage({ params }: { params: Promise<{ sessio
         actions={
           <div className="flex flex-wrap items-center gap-3">
             <Badge variant="outline">{SESSION_STATUS_LABELS[session.status]}</Badge>
+            <Button asChild variant="outline">
+              <a href={`/app/sessions/${session.id}/convocations`} download>
+                Convocations (PDF)
+              </a>
+            </Button>
             {user.profile.role === "admin" ? (
               <Button asChild variant="outline">
                 <a href={`/app/sessions/${session.id}/export`} download>
