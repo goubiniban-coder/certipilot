@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CloudOff, PenLine, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import "./vitrine.css";
 
@@ -92,6 +93,11 @@ export function Vitrine({ name }: { name: string }) {
               Planifiez la session, affectez le testeur et l&apos;engin, importez les candidats d&apos;un fichier. Le
               testeur ouvre la tablette et trouve tout prêt.
             </p>
+            <ul className="atouts">
+              <li><CloudOff aria-hidden /> Fonctionne sans réseau, même en sous-sol ou sur un chantier isolé</li>
+              <li><RefreshCw aria-hidden /> Synchronisation automatique dès que le réseau revient</li>
+              <li><PenLine aria-hidden /> Grille et signature du candidat directement sur la tablette</li>
+            </ul>
           </div>
         </section>
 

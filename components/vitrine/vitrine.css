@@ -110,3 +110,8 @@
 }
 
 .vitrine .pied { position: relative; z-index: 2; padding: 16px; text-align: center; font-size: 13px; color: var(--marine); background: rgba(248,250,252,.92); }
+
+.vitrine .atouts { list-style: none; margin: 0 0 4px; padding: 0; display: grid; gap: 8px; }
+.vitrine .atouts li { display: flex; align-items: flex-start; gap: 10px; font-weight: 600; font-size: 15px; line-height: 1.35; }
+.vitrine .atouts svg { flex: none; width: 22px; height: 22px; padding: 3px; border-radius: 6px; background: var(--jaune); color: var(--marine); }
+@media (max-width: 640px) { .vitrine .atouts li { font-size: 14px; } }
