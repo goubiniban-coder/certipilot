@@ -234,7 +234,7 @@ export function startScene(canvas) {
   // placement
   var excavator = makeExcavator(); excavator.position.set(-26, 0.3, -8); excavator.rotation.y = 0.5;
   var tower = makeTowerCrane(); tower.position.set(-36, 0.3, 10);
-  var crane = makeMobileCrane(); crane.position.set(30, 0.3, -6); crane.rotation.y = -Math.PI / 2 + 0.3;
+  var crane = makeMobileCrane(); crane.position.set(37, 0.3, -6); crane.rotation.y = -Math.PI / 2 + 0.3;
   var scissor = makeScissor(); scissor.position.set(22, 0.3, 11); scissor.rotation.y = 0.4;
   var loader = makeLoaderTruck(); loader.position.set(34, 0.3, 14); loader.rotation.y = -0.7;
   var forklift = makeForklift(C.or);
@@ -283,7 +283,7 @@ export function startScene(canvas) {
   var workers = [];
   function addWorker(x, z, ry, mode, vest) { var w = makeWorker(vest || 0xf97316); w.position.set(x, 0.3, z); w.rotation.y = ry || 0; w.userData.mode = mode; w.userData.x0 = x; w.userData.z0 = z; w.userData.ph = Math.random() * 6; workers.push(w); return w; }
   addWorker(-20, 6, 0.8, 'wave'); addWorker(-31, -1, -0.4, 'walk'); addWorker(-18, 16, 1.4, 'walk'); addWorker(7, 13, 3.1, 'wave', 0xfacc15);
-  addWorker(-6, 11, 0.2, 'walk', 0xfacc15); addWorker(16, 6, -0.9, 'walk'); addWorker(26, 3, 2.4, 'wave');
+  addWorker(-6, 11, 0.2, 'walk', 0xfacc15); addWorker(14, 14, -0.9, 'walk'); addWorker(26, 3, 2.4, 'wave');
 
   // drapeau sur l'entrepôt
   cyl(0.12, 0.12, 6, 0xe5e7eb, 16, 12.5, 7, scene, 6);
@@ -316,7 +316,7 @@ export function startScene(canvas) {
 
   /* ---------- chemins ---------- */
   function loop(pts) { return new THREE.CatmullRomCurve3(pts.map(function (p) { return new THREE.Vector3(p[0], p[1], p[2]); }), true, 'catmullrom', 0.5); }
-  var forkPath = loop([[-14, 0.5, 12], [-4, 0.5, 18], [10, 0.5, 15], [9, 0.5, 8], [3, 0.5, 2], [0, 0.5, -3], [-5, 0.5, 2], [-9, 0.5, 8]]);
+  var forkPath = loop([[-8, 0.5, 18], [-3, 0.5, 13], [-3, 0.5, 8], [-3, 0.5, 1], [0, 0.5, -4], [3, 0.5, 1], [3, 0.5, 8], [3, 0.5, 13], [8, 0.5, 18], [0, 0.5, 22]]);
   var stackPath = loop([[-10, 0.5, -3], [0, 0.5, 2], [10, 0.5, -3], [0, 0.5, -6]]);
   var roadPath = new THREE.CatmullRomCurve3([new THREE.Vector3(-95, 0.3, -35.5), new THREE.Vector3(95, 0.3, -35.5)]);
   var roadPath2 = new THREE.CatmullRomCurve3([new THREE.Vector3(95, 0.3, -30.5), new THREE.Vector3(-95, 0.3, -30.5)]);
@@ -373,7 +373,7 @@ export function startScene(canvas) {
     follow(truck2, roadPath2, run * 0.45 + 0.3);
 
     var ex = excavator.userData;
-    ex.turret.rotation.y = Math.sin(run * 4) * 0.7;
+    ex.turret.rotation.y = Math.sin(run * 4) * 0.45;
     ex.boom.rotation.x = -0.35 + Math.sin(run * 6) * 0.3;
     ex.stick.rotation.x = 0.9 + Math.sin(run * 6 + 1.2) * 0.5;
     ex.bucket.rotation.x = 0.7 + Math.sin(run * 6 + 2.4) * 0.5;
@@ -384,7 +384,7 @@ export function startScene(canvas) {
     tw.hook.position.y = -Math.sin(run * 5) * 1.2;
 
     var mc = crane.userData;
-    mc.turn.rotation.y = Math.sin(run * 3.5) * 1.1;
+    mc.turn.rotation.y = Math.sin(run * 3.5) * 0.6;
     mc.boom.rotation.x = -(0.25 + wave(run * 4) * 0.7);
 
     var sl = scissor.userData, hgt = 0.2 + wave(run * 5) * 0.7;
