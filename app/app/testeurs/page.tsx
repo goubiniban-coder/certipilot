@@ -29,7 +29,7 @@ export default async function TestersPage() {
 
   return (
     <>
-      <PageHeader title="Testeurs" description="Habilitations et CACES® personnels des testeurs." />
+      <PageHeader title="Testeurs" description="Les personnes qui font passer les épreuves, avec leurs habilitations et leurs CACES® personnels." />
       <div className="grid gap-6 xl:grid-cols-[1fr_22rem]">
         <Card>
           <CardContent>

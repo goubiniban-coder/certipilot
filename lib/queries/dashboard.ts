@@ -113,3 +113,24 @@ export async function getDashboardData(today: IsoDate): Promise<DashboardData> {
     renewals,
   };
 }
+
+export interface SetupProgress {
+  testers: number;
+  equipment: number;
+  candidates: number;
+  sessions: number;
+  certificates: number;
+}
+
+/** How far a new organization is in its first setup (drives the "Pour démarrer" guide). */
+export async function getSetupProgress(): Promise<SetupProgress> {
+  const supabase = await createClient();
+  const count = async (table: string) => {
+    const { count: n } = await supabase.from(table).select("id", { count: "exact", head: true });
+    return n ?? 0;
+  };
+  const [testers, equipment, candidates, sessions, certificates] = await Promise.all(
+    ["testers", "equipment", "candidates", "sessions", "certificates"].map(count),
+  );
+  return { testers: testers!, equipment: equipment!, candidates: candidates!, sessions: sessions!, certificates: certificates! };
+}

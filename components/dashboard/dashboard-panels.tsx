@@ -1,3 +1,4 @@
+import { Award, CalendarCheck, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { FamilyPicto } from "@/components/brand/family-picto";
 import { formatDate } from "@/components/expiry-badge";
@@ -11,17 +12,22 @@ const MONTHS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "aoû
 
 export function CertificateStats({ data }: { data: DashboardData }) {
   const stats = [
-    { label: "Certificats délivrés ce mois-ci", value: data.issuedThisMonth },
-    { label: "Certificats délivrés cette année", value: data.issuedThisYear },
-    { label: "Certificats en cours de validité", value: data.validCertificates },
+    { label: "Certificats délivrés ce mois-ci", value: data.issuedThisMonth, Icon: CalendarCheck, tone: "bg-blue-600 text-white" },
+    { label: "Certificats délivrés cette année", value: data.issuedThisYear, Icon: Award, tone: "bg-yellow text-yellow-foreground" },
+    { label: "Certificats en cours de validité", value: data.validCertificates, Icon: ShieldCheck, tone: "bg-green-700 text-white" },
   ];
   return (
     <section aria-label="Certificats délivrés" className="grid gap-4 sm:grid-cols-3">
       {stats.map((stat) => (
         <Card key={stat.label}>
-          <CardContent className="grid gap-1">
-            <span className="text-muted-foreground">{stat.label}</span>
-            <span className="font-display text-5xl leading-none font-bold tabular-nums">{stat.value}</span>
+          <CardContent className="flex items-center gap-4">
+            <span className={`flex size-14 shrink-0 items-center justify-center rounded-xl ${stat.tone}`}>
+              <stat.Icon className="size-7" aria-hidden />
+            </span>
+            <span className="grid gap-1">
+              <span className="font-display text-5xl leading-none font-bold tabular-nums">{stat.value}</span>
+              <span className="text-muted-foreground">{stat.label}</span>
+            </span>
           </CardContent>
         </Card>
       ))}
