@@ -25,7 +25,7 @@ export default async function SessionsPage() {
 
   return (
     <>
-      <PageHeader title="Sessions" description="Une session, c'est un jour de tests : choisissez la date et le lieu, ajoutez candidats, testeurs et engins, puis suivez les résultats." />
+      <PageHeader guide={["Créez la session : un nom, des dates, un lieu.", "Ouvrez-la, puis ajoutez les candidats, les testeurs et les engins.", "Le jour J, le testeur utilise sa tablette pour noter chaque épreuve.", "Une fois théorie et pratique réussies, délivrez le certificat depuis la session."]} title="Sessions" description="Une session, c'est un jour de tests : choisissez la date et le lieu, ajoutez candidats, testeurs et engins, puis suivez les résultats." />
       <div className="grid gap-6 2xl:grid-cols-[1fr_32rem]">
         <Card className="content-start">
           <CardContent>

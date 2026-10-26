@@ -35,7 +35,7 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
 
   return (
     <>
-      <PageHeader
+      <PageHeader guide={["Ajoutez les candidats un par un, ou importez-les d'un coup depuis un fichier.", "Rattachez chaque candidat à son entreprise : elle pourra suivre ses résultats.", "Inscrivez-les ensuite à une session de test."]}
         title="Candidats"
         actions={
           <Button asChild variant="outline">

@@ -27,7 +27,7 @@ export default async function EquipmentPage() {
 
   return (
     <>
-      <PageHeader title="Engins" description="Les engins utilisés pour les épreuves, et la date de leur prochaine vérification." />
+      <PageHeader guide={["Ajoutez chaque engin utilisé pour les épreuves.", "Indiquez la date de sa dernière vérification périodique.", "Un engin dont la vérification est dépassée ne peut plus servir : une alerte vous prévient avant."]} title="Engins" description="Les engins utilisés pour les épreuves, et la date de leur prochaine vérification." />
       <div className="grid gap-6 xl:grid-cols-[1fr_22rem]">
         <div className="grid content-start gap-4">
           {(data as Equipment[] | null)?.map((equipment) => (

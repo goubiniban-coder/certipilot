@@ -22,7 +22,7 @@ export default async function ReferentialPage() {
 
   return (
     <>
-      <PageHeader
+      <PageHeader guide={["Le référentiel liste les recommandations, catégories et durées de validité.", "Les valeurs viennent des textes officiels : ne les modifiez que si la réglementation change.", "Les grilles d'évaluation se règlent ici, par catégorie."]}
         title="Référentiel"
         description="Recommandations, catégories, durées de validité et grilles de votre organisme."
       />

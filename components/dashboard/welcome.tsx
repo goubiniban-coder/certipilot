@@ -91,15 +91,19 @@ export function QuickActions() {
   );
 }
 
-/** First-setup guide: shown until every step is done, then it disappears. */
-export function GettingStarted({ progress }: { progress: SetupProgress }) {
-  const steps = [
+export function setupSteps(progress: SetupProgress) {
+  return [
     { done: progress.testers > 0, label: "Ajoutez un testeur", hint: "La personne qui fait passer les épreuves.", href: "/app/testeurs" },
     { done: progress.equipment > 0, label: "Ajoutez un engin", hint: "Chariot, grue, nacelle… celui des épreuves.", href: "/app/engins" },
     { done: progress.candidates > 0, label: "Ajoutez des candidats", hint: "Un par un, ou d'un coup depuis un fichier.", href: "/app/candidats" },
     { done: progress.sessions > 0, label: "Planifiez une session", hint: "Choisissez la date, le lieu, les testeurs.", href: "/app/sessions" },
     { done: progress.certificates > 0, label: "Délivrez votre premier certificat", hint: "Une fois l'épreuve réussie et signée.", href: "/app/certificats" },
   ];
+}
+
+/** First-setup guide: shown until every step is done, then it disappears. */
+export function GettingStarted({ progress }: { progress: SetupProgress }) {
+  const steps = setupSteps(progress);
   const done = steps.filter((s) => s.done).length;
   if (done === steps.length) return null;
   const next = steps.find((s) => !s.done);

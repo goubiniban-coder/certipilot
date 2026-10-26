@@ -58,7 +58,7 @@ export default async function BillingPage() {
 
   return (
     <>
-      <PageHeader title="Devis et factures" description="Vos devis, puis les factures, numérotés sans trou." />
+      <PageHeader guide={["Créez un devis : client, objet, lignes avec quantité et prix.", "Une fois accepté, transformez-le en facture en un clic.", "Les factures sont numérotées sans trou et ne peuvent plus être modifiées."]} title="Devis et factures" description="Vos devis, puis les factures, numérotés sans trou." />
       <div className="grid gap-6 xl:grid-cols-[1fr_28rem]">
         <div className="grid content-start gap-3">
           {error ? (

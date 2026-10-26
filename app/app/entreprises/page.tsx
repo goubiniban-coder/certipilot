@@ -31,7 +31,7 @@ export default async function ClientCompaniesPage() {
 
   return (
     <>
-      <PageHeader title="Entreprises clientes" description="Les entreprises qui envoient leurs salariés en test." />
+      <PageHeader guide={["Ajoutez les entreprises qui vous envoient leurs salariés.", "Invitez un contact : il suit lui-même les certificats et les échéances de ses salariés.", "Vous gagnez du temps : moins d'appels pour connaître qui est à renouveler."]} title="Entreprises clientes" description="Les entreprises qui envoient leurs salariés en test." />
       <div className="grid gap-6 xl:grid-cols-[1fr_22rem]">
         <div className="grid content-start gap-4">
           {(data as Row[] | null)?.map((company) => (

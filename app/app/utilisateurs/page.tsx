@@ -30,7 +30,7 @@ export default async function UsersPage() {
 
   return (
     <>
-      <PageHeader title="Utilisateurs" description="Responsables, secrétariat et testeurs de votre organisme." />
+      <PageHeader guide={["Invitez votre équipe : responsable, secrétariat ou testeur.", "Copiez le lien d'invitation et envoyez-le par e-mail ou message.", "La personne choisit son mot de passe et accède à son espace."]} title="Utilisateurs" description="Responsables, secrétariat et testeurs de votre organisme." />
       <div className="grid gap-6 xl:grid-cols-[1fr_24rem]">
         <Card>
           <CardHeader>

@@ -42,7 +42,7 @@ export default async function CertificatesPage({ searchParams }: { searchParams:
 
   return (
     <>
-      <PageHeader
+      <PageHeader guide={["Un certificat se délivre depuis la page de la session, quand les épreuves sont réussies.", "Chaque certificat a un QR code : n'importe qui peut en vérifier l'authenticité.", "Ici, retrouvez, téléchargez ou révoquez les certificats déjà délivrés."]}
         title="Certificats"
         description="Les certificats se délivrent depuis la page de la session, une fois la théorie et la pratique réussies."
       />

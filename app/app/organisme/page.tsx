@@ -18,7 +18,7 @@ export default async function OrganizationPage() {
   const organization = { ...session.organization, ...(billing ?? {}) };
   return (
     <>
-      <PageHeader title="Organisme" description="Paramètres de votre organisme testeur." />
+      <PageHeader guide={["Vérifiez le nom, le SIRET et le préfixe des certificats.", "Ajoutez l'adresse et le n° de TVA : ils figurent sur vos devis et factures.", "La conservation des données des candidats respecte le RGPD."]} title="Organisme" description="Paramètres de votre organisme testeur." />
       <div className="grid max-w-3xl gap-6">
         <Card>
           <CardHeader>

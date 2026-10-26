@@ -1,3 +1,4 @@
+import { Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { NavLinks } from "@/components/layout/nav-links";
@@ -65,10 +66,13 @@ export function PageHeader({
   title,
   description,
   actions,
+  guide,
 }: {
   title: string;
   description?: React.ReactNode;
   actions?: React.ReactNode;
+  /** Short plain-language steps, shown in a collapsible "Comment ça marche ?" box. */
+  guide?: string[];
 }) {
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
@@ -77,6 +81,25 @@ export function PageHeader({
         {description ? <p className="text-lg text-muted-foreground">{description}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
+      {guide?.length ? (
+        <details className="group w-full rounded-2xl border-2 border-yellow/70 bg-yellow/10 px-4 py-3">
+          <summary className="flex cursor-pointer list-none items-center gap-2 font-bold">
+            <Lightbulb className="size-5 text-yellow-foreground" aria-hidden /> Comment ça marche ?
+            <span className="ml-auto text-sm font-semibold text-muted-foreground group-open:hidden">Afficher</span>
+            <span className="ml-auto hidden text-sm font-semibold text-muted-foreground group-open:inline">Masquer</span>
+          </summary>
+          <ol className="mt-3 grid gap-2">
+            {guide.map((step, i) => (
+              <li key={step} className="flex items-start gap-3">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-yellow font-display text-lg font-bold text-yellow-foreground">
+                  {i + 1}
+                </span>
+                <span className="pt-0.5">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </details>
+      ) : null}
     </div>
   );
 }
