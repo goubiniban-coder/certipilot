@@ -81,13 +81,6 @@
 }
 .vitrine .jauge a { width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,.7); border: 3px solid var(--marine); display: block; transition: transform .2s ease, background .2s ease; }
 .vitrine .jauge a.actif { background: var(--jaune); transform: scale(1.35); }
-.vitrine .bandeau {
-  position: fixed; z-index: 4; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px;
-  background: var(--marine); color: #fff; font-weight: 600; font-size: 15px; border: 3px solid var(--jaune);
-  box-shadow: 0 6px 0 rgba(0,0,0,.2);
-}
-.vitrine .bandeau b { font-family: var(--display); font-size: 22px; color: var(--jaune); }
 .vitrine .apercu-retire {
   position: fixed; z-index: 6; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   background: rgba(255,255,255,.92); border: 2px solid var(--marine); border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 600; color: var(--marine);
@@ -107,8 +100,7 @@
   .vitrine .familles b { font-size: 17px; min-width: 44px; }
   .vitrine .chapitre { padding-top: 72px; }
 .vitrine .jauge { display: none; }
-.vitrine .chapitre { align-items: flex-end; padding-bottom: 92px; }
-.vitrine .bandeau { right: max(16px, env(safe-area-inset-right, 0px)); }
+.vitrine .chapitre { align-items: flex-end; padding-bottom: 32px; }
 .vitrine .apercu-retire { display: none; }
 .vitrine .nav .btn { min-height: 44px; padding: 0 16px; }
 }

@@ -4,14 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import "./vitrine.css";
 
-const BANDEAU: [string, string][] = [
-  ["R.489", "Chariot automoteur"],
-  ["R.482", "Engins de chantier · R.487 grue à tour"],
-  ["R.484", "Pont roulant · R.485 gerbeur"],
-  ["R.483", "Grue mobile · R.486 PEMP · R.490 camion-grue"],
-  ["R.489", "Chariot automoteur"],
-];
-
 const CHAPITRES = ["hero", "chantier", "entrepot", "familles", "connexion"];
 const LABELS = ["Accueil", "Le chantier", "L'entrepôt", "Les familles d'engins", "Connexion"];
 
@@ -75,11 +67,6 @@ export function Vitrine({ name }: { name: string }) {
           <a key={id} href={`#${id}`} aria-label={LABELS[i]} className={i === chap ? "actif" : undefined} />
         ))}
       </nav>
-
-      <div className="bandeau" role="status">
-        <b>{BANDEAU[chap]?.[0]}</b>
-        <span>{BANDEAU[chap]?.[1]}</span>
-      </div>
 
       <main>
         <section className="chapitre" id="hero">
