@@ -86,7 +86,7 @@ export function Vitrine({ name }: { name: string }) {
           <div className="carte">
             <p className="etiquette"><span className="pastille" />Logiciel des organismes testeurs</p>
             <h1>Votre chantier de tests, enfin sous contrôle.</h1>
-            <p>
+            <p className="detail">
               Sessions, candidats, grilles d&apos;évaluation et certificats CACES® : tout tient dans un seul outil, y
               compris sans réseau sur la tablette.
             </p>
@@ -101,7 +101,7 @@ export function Vitrine({ name }: { name: string }) {
           <div className="carte">
             <p className="etiquette"><span className="pastille" style={{ ["--c" as string]: "var(--f482)" }} />R.482 · R.487 · Engins de chantier</p>
             <h2>Chaque candidat a son engin, sa grille, son testeur.</h2>
-            <p>
+            <p className="detail">
               Planifiez la session, affectez le testeur et l&apos;engin, importez les candidats d&apos;un fichier. Le
               testeur ouvre la tablette et trouve tout prêt.
             </p>
@@ -112,7 +112,7 @@ export function Vitrine({ name }: { name: string }) {
           <div className="carte">
             <p className="etiquette"><span className="pastille" style={{ ["--c" as string]: "var(--f484)" }} />R.484 · R.489 · Entrepôt de preuves</p>
             <h2>Tout est rangé dans l&apos;entrepôt, rien ne se perd.</h2>
-            <p>
+            <p className="detail">
               Identité contrôlée, grille signée, certificat avec QR code : le dossier est conservé, exportable pour
               l&apos;audit en un clic.
             </p>
@@ -140,7 +140,7 @@ export function Vitrine({ name }: { name: string }) {
           <div className="carte">
             <p className="etiquette"><span className="pastille" />Accès à votre organisme</p>
             <h2>Prêt à monter dans l&apos;engin ?</h2>
-            <p>Connectez-vous pour retrouver vos sessions, ou créez le compte de votre organisme en quelques minutes.</p>
+            <p className="detail">Connectez-vous pour retrouver vos sessions, ou créez le compte de votre organisme en quelques minutes.</p>
             <div className="actions">
               <Link className="btn sombre" href="/connexion">Accéder à mon espace</Link>
               <Link className="btn contour" href="/inscription">Inscrire mon organisme</Link>

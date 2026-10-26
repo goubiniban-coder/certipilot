@@ -93,9 +93,21 @@
   background: rgba(255,255,255,.92); border: 2px solid var(--marine); border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 600; color: var(--marine);
 }
 @media (max-width: 640px) {
-  .vitrine .carte { padding: 20px; }
+  .vitrine .carte { padding: 14px 16px; border-width: 2px; border-radius: 16px; background: rgba(248,250,252,.84); backdrop-filter: blur(6px); box-shadow: 0 6px 0 rgba(23,37,84,.18); }
+  .vitrine .carte p:not(.etiquette) { font-size: 15px; line-height: 1.4; margin-bottom: 10px; }
+  .vitrine .carte .detail { display: none; }
+  .vitrine .etiquette { font-size: 11px; margin-bottom: 6px; }
+  .vitrine h1 { font-size: 34px; margin-bottom: 8px; }
+  .vitrine h2 { font-size: 28px; margin-bottom: 8px; }
+  .vitrine .actions { gap: 10px; margin-top: 4px; }
+  .vitrine .btn { min-height: 44px; padding: 0 12px; font-size: 15px; }
+  .vitrine .nav { background: linear-gradient(rgba(125,211,252,.9), rgba(125,211,252,0)); padding-bottom: 22px; }
+  .vitrine .familles { gap: 6px; }
+  .vitrine .familles li { padding: 5px 8px; font-size: 13px; }
+  .vitrine .familles b { font-size: 17px; min-width: 44px; }
+  .vitrine .chapitre { padding-top: 72px; }
 .vitrine .jauge { display: none; }
-.vitrine .chapitre { align-items: flex-end; padding-bottom: 88px; }
+.vitrine .chapitre { align-items: flex-end; padding-bottom: 92px; }
 .vitrine .bandeau { right: max(16px, env(safe-area-inset-right, 0px)); }
 .vitrine .apercu-retire { display: none; }
 .vitrine .nav .btn { min-height: 44px; padding: 0 16px; }
