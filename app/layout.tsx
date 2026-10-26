@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title: APP_NAME, description: APP_DESCRIPTION },
 };
 
-export const viewport: Viewport = { themeColor: "#172554" };
+// colorScheme "light" also stops Chrome on Android from force-darkening the pages.
+export const viewport: Viewport = { themeColor: "#172554", colorScheme: "light" };
 
 export default function RootLayout({
   children,
@@ -27,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${barlow.variable} ${barlowCondensed.variable}`}>
+    <html lang="fr" style={{ colorScheme: "light" }} className={`${barlow.variable} ${barlowCondensed.variable}`}>
       <body>{children}</body>
     </html>
   );
