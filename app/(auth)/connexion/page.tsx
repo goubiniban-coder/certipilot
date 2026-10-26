@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { getSession, homeFor } from "@/lib/auth";
+import { getCompanySession, getSession, homeFor } from "@/lib/auth";
 import { SignInForm } from "./sign-in-form";
 
 export const metadata: Metadata = { title: "Connexion" };
@@ -10,6 +10,7 @@ export const metadata: Metadata = { title: "Connexion" };
 export default async function SignInPage() {
   const session = await getSession();
   if (session) redirect(homeFor(session.profile.role));
+  if (await getCompanySession()) redirect("/entreprise");
 
   return (
     <Card>

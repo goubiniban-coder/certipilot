@@ -48,3 +48,29 @@ export async function requireSession(roles?: readonly AppRole[]): Promise<Sessio
   if (roles && !roles.includes(session.profile.role)) redirect(homeFor(session.profile.role));
   return session;
 }
+
+export interface CompanySession {
+  userId: string;
+  fullName: string;
+  companyName: string;
+  organizationName: string;
+}
+
+/** Signed-in employer contact (client company portal), or null. Staff accounts return null. */
+export const getCompanySession = cache(async (): Promise<CompanySession | null> => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase.rpc("company_portal_info");
+  const row = (data as { full_name: string; company_name: string; organization_name: string }[] | null)?.[0];
+  if (!row) return null;
+  return { userId: user.id, fullName: row.full_name, companyName: row.company_name, organizationName: row.organization_name };
+});
+
+export async function requireCompanySession(): Promise<CompanySession> {
+  const session = await getCompanySession();
+  if (!session) redirect("/connexion");
+  return session;
+}

@@ -58,6 +58,9 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
     role = "admin";
   }
   if (!role) {
+    // Employer contacts of a client company have no profile: they use the company portal.
+    const { data: portal } = await supabase.rpc("company_portal_info");
+    if ((portal as unknown[] | null)?.length) redirect("/entreprise");
     await supabase.auth.signOut();
     return {
       message:

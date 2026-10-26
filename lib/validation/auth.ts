@@ -42,6 +42,12 @@ export const invitationSchema = z.object({
   role: z.enum(["admin", "secretariat", "tester"], { error: "Rôle invalide" }),
 });
 
+export const companyInvitationSchema = z.object({
+  companyId: z.string().uuid(),
+  email,
+  fullName: z.string().trim().min(2, "Nom et prénom obligatoires"),
+});
+
 export const acceptInvitationSchema = z.object({
   token: z.string().min(20),
   password,
