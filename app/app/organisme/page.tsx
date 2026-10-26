@@ -2,12 +2,20 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/app-shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireSession } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { GdprPurgeForm, OrganizationForm } from "./forms";
 
 export const metadata: Metadata = { title: "Organisme" };
 
 export default async function OrganizationPage() {
   const session = await requireSession(["admin"]);
+  // Billing details are read apart: they only exist once the billing migration is applied.
+  const { data: billing } = await (await createClient())
+    .from("organizations")
+    .select("address, vat_number")
+    .eq("id", session.organization.id)
+    .maybeSingle();
+  const organization = { ...session.organization, ...(billing ?? {}) };
   return (
     <>
       <PageHeader title="Organisme" description="Paramètres de votre organisme testeur." />
@@ -17,7 +25,7 @@ export default async function OrganizationPage() {
             <CardTitle>Informations</CardTitle>
           </CardHeader>
           <CardContent>
-            <OrganizationForm organization={session.organization} />
+            <OrganizationForm organization={organization} />
           </CardContent>
         </Card>
         <Card>

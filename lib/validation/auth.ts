@@ -56,6 +56,8 @@ export const acceptInvitationSchema = z.object({
 export const organizationSettingsSchema = z.object({
   name: z.string().trim().min(2, "Nom de l'organisme obligatoire"),
   certificatePrefix: organizationSchema.shape.certificatePrefix,
+  address: z.string().trim().max(300).optional().transform((v) => v || null),
+  vatNumber: z.string().trim().max(30).optional().transform((v) => v || null),
   retentionMonths: z.coerce
     .number({ error: "Durée invalide" })
     .int("Durée invalide")

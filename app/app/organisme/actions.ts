@@ -18,6 +18,8 @@ export async function updateOrganization(_: FormState, formData: FormData): Prom
       name: parsed.data.name,
       certificate_prefix: parsed.data.certificatePrefix,
       retention_months: parsed.data.retentionMonths,
+      address: parsed.data.address,
+      vat_number: parsed.data.vatNumber,
     })
     .eq("id", session.organization.id);
   if (error) return { message: dbErrorMessage(error) };

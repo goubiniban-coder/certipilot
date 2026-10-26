@@ -14,6 +14,8 @@ export interface Organization {
   siret: string;
   certificate_prefix: string;
   retention_months: number;
+  address?: string | null;
+  vat_number?: string | null;
 }
 
 export interface Profile {

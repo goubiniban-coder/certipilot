@@ -16,6 +16,8 @@ export function OrganizationForm({ organization }: { organization: Organization 
       <FormMessage state={state} />
       <Field label="Nom de l'organisme" name="name" defaultValue={organization.name} errors={errors.name} />
       <Field label="SIRET" name="siret" defaultValue={organization.siret} disabled hint="Le SIRET ne peut pas être modifié." />
+      <Field label="Adresse (devis et factures)" name="address" defaultValue={organization.address ?? ""} errors={errors.address} />
+      <Field label="N° de TVA intracommunautaire" name="vatNumber" defaultValue={organization.vat_number ?? ""} errors={errors.vatNumber} />
       <Field
         label="Préfixe des numéros de certificat"
         name="certificatePrefix"

@@ -20,6 +20,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { href: "/app/candidats", label: "Candidats", roles: BACK_OFFICE },
   { href: "/app/entreprises", label: "Entreprises clientes", roles: BACK_OFFICE },
   { href: "/app/certificats", label: "Certificats", roles: BACK_OFFICE },
+  { href: "/app/facturation", label: "Devis et factures", roles: BACK_OFFICE },
   { href: "/app/testeurs", label: "Testeurs", roles: BACK_OFFICE },
   { href: "/app/engins", label: "Engins", roles: BACK_OFFICE },
   { href: "/app/referentiel", label: "Référentiel", roles: BACK_OFFICE },
