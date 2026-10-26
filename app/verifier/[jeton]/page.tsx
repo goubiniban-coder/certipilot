@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CheckCircle2, CircleAlert, XCircle } from "lucide-react";
 import { formatDate } from "@/components/expiry-badge";
+import { FamilyPicto } from "@/components/brand/family-picto";
+import { Logo } from "@/components/brand/logo";
 import { Card, CardContent } from "@/components/ui/card";
 import { APP_NAME } from "@/lib/constants";
+import { familyStyle } from "@/lib/families";
 import { CERTIFICATE_STATUS_LABELS, type CertificateStatus } from "@/lib/rules";
 import { createAnonClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
@@ -35,65 +39,85 @@ export default async function VerifyCertificatePage({ params }: { params: Promis
   const { data } = await createAnonClient().rpc("verify_certificate", { p_token: jeton });
   const cert = (data as Verification[] | null)?.[0];
 
+  const family = cert ? familyStyle(cert.recommendation_code) : null;
+
   return (
-    <main className="mx-auto grid max-w-2xl gap-6 px-4 py-10">
-      <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        {APP_NAME} · Vérification de certificat
-      </p>
-      {!cert ? (
-        <Card>
-          <CardContent className="grid gap-2 pt-6">
-            <h1 className="text-2xl font-bold">Certificat introuvable</h1>
-            <p className="text-lg">
-              Aucun certificat ne correspond à ce lien. Vérifiez l&apos;adresse ou le QR code, ou contactez l&apos;organisme
-              testeur qui l&apos;a délivré.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
-          <div className={cn("flex items-center gap-4 rounded-lg border-2 p-5", STATUS_STYLE[cert.status].className)}>
-            {(() => {
-              const { Icon } = STATUS_STYLE[cert.status];
-              return <Icon className="size-10 shrink-0" aria-hidden />;
-            })()}
-            <div>
-              <h1 className="text-3xl font-bold">{CERTIFICATE_STATUS_LABELS[cert.status]}</h1>
-              <p className="text-lg">{STATUS_STYLE[cert.status].text}</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-background">
+      <header className="flex items-center gap-3 bg-[var(--marine)] px-5 py-4 text-white">
+        <Link href="/" className="flex items-center gap-3 font-display text-2xl font-bold">
+          <Logo size={34} />
+          {APP_NAME}
+        </Link>
+        <span className="ml-auto text-sm font-semibold text-white/70">Vérification de certificat</span>
+      </header>
+      <main className="mx-auto grid max-w-2xl gap-6 px-4 py-8">
+        {!cert ? (
           <Card>
-            <CardContent className="grid gap-4 pt-6">
-              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-lg">
-                <dt className="text-muted-foreground">Numéro</dt>
-                <dd className="font-semibold">{cert.number}</dd>
-                <dt className="text-muted-foreground">Titulaire</dt>
-                <dd className="font-semibold">{cert.holder_name}</dd>
-                <dt className="text-muted-foreground">Recommandation</dt>
-                <dd>
-                  {cert.recommendation_code} · {cert.recommendation_label}
-                </dd>
-                <dt className="text-muted-foreground">Catégories</dt>
-                <dd>
-                  <ul>
-                    {cert.categories.map((c) => (
-                      <li key={c.code}>
-                        <strong>Cat. {c.code}</strong> · {c.label}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-                <dt className="text-muted-foreground">Délivré le</dt>
-                <dd>{formatDate(cert.issued_on)}</dd>
-                <dt className="text-muted-foreground">Valable jusqu&apos;au</dt>
-                <dd>{formatDate(cert.expires_on)}</dd>
-                <dt className="text-muted-foreground">Organisme testeur</dt>
-                <dd>{cert.organization_name}</dd>
-              </dl>
+            <CardContent className="grid gap-2 pt-6">
+              <h1 className="font-display text-3xl font-bold">Certificat introuvable</h1>
+              <p className="text-lg">
+                Aucun certificat ne correspond à ce lien. Vérifiez l&apos;adresse ou le QR code, ou contactez
+                l&apos;organisme testeur qui l&apos;a délivré.
+              </p>
             </CardContent>
           </Card>
-        </>
-      )}
-    </main>
+        ) : (
+          <>
+            <div
+              role="status"
+              className={cn(
+                "flex items-center gap-4 rounded-2xl border-2 p-5 shadow-[0_6px_0_rgba(23,37,84,.15)]",
+                STATUS_STYLE[cert.status].className,
+              )}
+            >
+              {(() => {
+                const { Icon } = STATUS_STYLE[cert.status];
+                return <Icon className="size-14 shrink-0" aria-hidden />;
+              })()}
+              <div>
+                <h1 className="font-display text-5xl font-bold leading-none">{CERTIFICATE_STATUS_LABELS[cert.status]}</h1>
+                <p className="mt-1 text-lg">{STATUS_STYLE[cert.status].text}</p>
+              </div>
+            </div>
+            <Card className="overflow-hidden p-0">
+              <div className="flex items-center gap-4 border-b bg-muted/60 p-5">
+                {family && <FamilyPicto code={cert.recommendation_code} size={56} />}
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    {cert.recommendation_code} · {cert.recommendation_label}
+                  </p>
+                  <p className="font-display text-3xl font-bold leading-tight">{cert.holder_name}</p>
+                </div>
+              </div>
+              <CardContent className="grid gap-4 pb-6">
+                <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-lg">
+                  <dt className="text-muted-foreground">Numéro</dt>
+                  <dd className="font-semibold">{cert.number}</dd>
+                  <dt className="text-muted-foreground">Catégories</dt>
+                  <dd>
+                    <ul>
+                      {cert.categories.map((c) => (
+                        <li key={c.code}>
+                          <strong>Cat. {c.code}</strong> · {c.label}
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                  <dt className="text-muted-foreground">Délivré le</dt>
+                  <dd>{formatDate(cert.issued_on)}</dd>
+                  <dt className="text-muted-foreground">Valable jusqu&apos;au</dt>
+                  <dd>{formatDate(cert.expires_on)}</dd>
+                  <dt className="text-muted-foreground">Organisme testeur</dt>
+                  <dd>{cert.organization_name}</dd>
+                </dl>
+              </CardContent>
+            </Card>
+            <p className="text-center text-sm text-muted-foreground">
+              Vérifié en direct auprès de {APP_NAME}. CACES® est une marque déposée de la Cnam.
+            </p>
+          </>
+        )}
+      </main>
+    </div>
   );
 }
