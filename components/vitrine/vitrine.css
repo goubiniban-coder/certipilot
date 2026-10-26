@@ -1,0 +1,108 @@
+/* Scène 3D low-poly fixe (chantier + entrepôt) ; la page défile par-dessus et pilote caméra et engins. */
+.vitrine {
+  --marine: #172554;
+  --marine-2: #1e3a8a;
+  --jaune: #facc15;
+  --encre: #0f172a;
+  --papier: #f8fafc;
+  --ciel-haut: #7dd3fc;
+  --ciel-bas: #fef3c7;
+  --f482: #eab308; --f483: #15803d; --f484: #ea580c; --f485: #b91c1c;
+  --f486: #7c3aed; --f487: #d97706; --f489: #ca8a04; --f490: #1d4ed8;
+  --display: var(--font-barlow-condensed), "Arial Narrow", system-ui, sans-serif;
+  --texte: var(--font-barlow), system-ui, sans-serif;
+  color-scheme: light;
+}
+.vitrine, .vitrine * { box-sizing: border-box; }
+.vitrine {
+  position: relative;
+  background: var(--ciel-haut);
+  color: var(--encre);
+  font-family: var(--texte);
+  font-size: 17px;
+  line-height: 1.5;
+}
+.vitrine #scene {
+  position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0;
+  background: linear-gradient(var(--ciel-haut), var(--ciel-bas));
+}
+.vitrine .nav {
+  position: fixed; z-index: 5; top: env(safe-area-inset-top, 0px); left: 0; right: 0;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px max(16px, env(safe-area-inset-left, 0px)) 14px max(16px, env(safe-area-inset-right, 0px));
+}
+.vitrine .nav .marque { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 28px; color: #fff; text-shadow: 0 2px 0 rgba(23,37,84,.5); text-decoration: none; }
+.vitrine .nav .espace { flex: 1; }
+.vitrine .btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 22px;
+  border-radius: 12px; border: 0; font: 700 17px var(--texte); text-decoration: none; cursor: pointer;
+  background: var(--jaune); color: #1c1917; box-shadow: 0 4px 0 #a16207;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.vitrine .btn:hover { transform: translateY(2px); box-shadow: 0 2px 0 #a16207; }
+.vitrine .btn:focus-visible, .vitrine a:focus-visible, .vitrine input:focus-visible { outline: 3px solid var(--marine-2); outline-offset: 3px; }
+.vitrine .btn.sombre { background: var(--marine); color: #fff; box-shadow: 0 4px 0 #0b1235; }
+.vitrine .btn.sombre:hover { box-shadow: 0 2px 0 #0b1235; }
+.vitrine .btn.contour { background: rgba(255,255,255,.9); color: var(--marine); box-shadow: 0 4px 0 rgba(23,37,84,.35); }
+.vitrine main { position: relative; z-index: 2; }
+.vitrine .chapitre {
+  min-height: 100vh; min-height: 100svh; display: flex; align-items: center;
+  padding: 96px max(16px, env(safe-area-inset-left, 0px)) 64px max(16px, env(safe-area-inset-right, 0px));
+}
+.vitrine .chapitre.droite { justify-content: flex-end; }
+.vitrine .carte {
+  width: min(520px, 100%); background: rgba(248,250,252,.94); border-radius: 20px; padding: 28px;
+  box-shadow: 0 10px 0 rgba(23,37,84,.18), 0 24px 48px rgba(23,37,84,.25);
+  border: 3px solid var(--marine);
+}
+.vitrine .etiquette {
+  display: inline-flex; align-items: center; gap: 8px; font: 700 13px var(--texte); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--marine-2); margin: 0 0 10px;
+}
+.vitrine .pastille { width: 14px; height: 14px; border-radius: 4px; background: var(--c, var(--jaune)); border: 2px solid var(--encre); }
+.vitrine h1, .vitrine h2 { font-family: var(--display); font-weight: 700; line-height: .98; margin: 0 0 14px; text-wrap: balance; color: var(--marine); }
+.vitrine h1 { font-size: clamp(48px, 7vw, 76px); }
+.vitrine h2 { font-size: clamp(36px, 5vw, 52px); }
+.vitrine p { margin: 0 0 16px; max-width: 60ch; }
+.vitrine .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+.vitrine .familles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 0 8px; padding: 0; list-style: none; }
+.vitrine .familles li {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: #fff; border: 2px solid #e2e8f0; font-weight: 600; font-size: 15px;
+}
+.vitrine .familles b { font-family: var(--display); font-size: 20px; color: var(--c); filter: brightness(.8); min-width: 52px; flex: none; }
+.vitrine .familles i { width: 14px; height: 14px; border-radius: 4px; background: var(--c); border: 2px solid var(--encre); }
+.vitrine form { display: grid; gap: 12px; margin-top: 8px; }
+.vitrine label { font-weight: 600; font-size: 15px; display: grid; gap: 6px; }
+.vitrine input { min-height: 48px; border-radius: 10px; border: 2px solid #64748b; padding: 0 14px; font: 500 17px var(--texte); background: #fff; }
+.vitrine .lien { font-weight: 600; color: var(--marine-2); }
+.vitrine .jauge {
+  position: fixed; z-index: 5; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%);
+  display: grid; gap: 12px;
+}
+.vitrine .jauge a { width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,.7); border: 3px solid var(--marine); display: block; transition: transform .2s ease, background .2s ease; }
+.vitrine .jauge a.actif { background: var(--jaune); transform: scale(1.35); }
+.vitrine .bandeau {
+  position: fixed; z-index: 4; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px;
+  background: var(--marine); color: #fff; font-weight: 600; font-size: 15px; border: 3px solid var(--jaune);
+  box-shadow: 0 6px 0 rgba(0,0,0,.2);
+}
+.vitrine .bandeau b { font-family: var(--display); font-size: 22px; color: var(--jaune); }
+.vitrine .apercu-retire {
+  position: fixed; z-index: 6; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  background: rgba(255,255,255,.92); border: 2px solid var(--marine); border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 600; color: var(--marine);
+}
+@media (max-width: 640px) {
+  .vitrine .carte { padding: 20px; }
+.vitrine .jauge { display: none; }
+.vitrine .chapitre { align-items: flex-end; padding-bottom: 88px; }
+.vitrine .bandeau { right: max(16px, env(safe-area-inset-right, 0px)); }
+.vitrine .apercu-retire { display: none; }
+.vitrine .nav .btn { min-height: 44px; padding: 0 16px; }
+}
+.vitrine { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  .vitrine .btn { transition: none; }
+}
+
+.vitrine .pied { position: relative; z-index: 2; padding: 16px; text-align: center; font-size: 13px; color: var(--marine); background: rgba(248,250,252,.92); }
